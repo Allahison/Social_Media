@@ -1,3 +1,4 @@
+// src/components/PostCard.js
 import React from 'react';
 import './PostCard.css';
 import InteractionBar from '../createpost/intraction/InteractionBar';
@@ -17,10 +18,10 @@ export default function PostCard({ post, currentUserId, onDelete }) {
   } = post;
 
   const profileImage = avatar_url || '/assets/default-avatar.png';
-  const displayName =  username || 'User';
-const date = created_at
-  ? new Date(created_at).toLocaleString()
-  : new Date().toLocaleString();
+  const displayName = username || 'User';
+  const date = created_at
+    ? new Date(created_at).toLocaleString()
+    : new Date().toLocaleString();
 
   return (
     <div className="post-card">
@@ -32,12 +33,14 @@ const date = created_at
         />
         <div className="post-user-info">
           <h4>{displayName}</h4>
-          <p className="timestamp">
-           <p className="timestamp">{date}</p>
-          </p>
+          <p className="timestamp">{date}</p>
         </div>
         {user_id === currentUserId && (
-          <button className="delete-post-btn" onClick={() => onDelete(id)}>
+          <button
+            className="delete-post-btn"
+            onClick={() => onDelete(id)}
+            title="Delete Post"
+          >
             🗑️
           </button>
         )}
@@ -59,7 +62,9 @@ const date = created_at
         </div>
       )}
 
-      <InteractionBar postId={id} userId={currentUserId} />
+      {/* ✅ Updated InteractionBar to also accept post to manage local like state */}
+      <InteractionBar key={post.id} postId={id} userId={currentUserId} />
+
     </div>
   );
 }

@@ -3,20 +3,19 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
 import { useUser } from '../context/UserContext';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
-import './LikeButton.css'; // optional for custom styling
+import './LikeButton.css';
 
-const LikeButton = ({ postId }) => {
+const LikeButton = ({ postId, onLike }) => {
   const { userData } = useUser();
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
 
   const userId = userData?.id;
 
-  // ✅ Fetch if user has liked the post + total likes
   const fetchLikeData = async () => {
     if (!userId) return;
 
-    const { data: like, error: likeError } = await supabase
+    const { data: like } = await supabase
       .from('likes')
       .select('*')
       .eq('post_id', postId)
@@ -25,33 +24,31 @@ const LikeButton = ({ postId }) => {
 
     setLiked(!!like);
 
-    const { count, error: countError } = await supabase
+    const { count } = await supabase
       .from('likes')
       .select('*', { count: 'exact', head: true })
       .eq('post_id', postId);
 
-    if (!countError) {
-      setLikeCount(count);
-    }
+    setLikeCount(count || 0);
   };
 
-  // ✅ Like or unlike the post
   const toggleLike = async () => {
     if (!userId) return;
 
     if (liked) {
-      const { error } = await supabase
+      await supabase
         .from('likes')
         .delete()
         .eq('post_id', postId)
         .eq('user_id', userId);
     } else {
-      const { error } = await supabase
+      await supabase
         .from('likes')
         .insert({ post_id: postId, user_id: userId });
     }
 
-    fetchLikeData(); // refresh like state
+    fetchLikeData(); // Local refresh
+    if (onLike) onLike(); // 🔁 Notify parent (to refresh posts if needed)
   };
 
   useEffect(() => {

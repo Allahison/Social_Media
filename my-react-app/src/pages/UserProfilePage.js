@@ -136,7 +136,7 @@ export default function UserProfilePage() {
                 currentUserId={userData.id}
                 onDelete={fetchUserPosts}
               />
-              {/* ❌ Removed: <CommentBox postId={post.id} /> */}
+              
             </div>
           ))
         )}

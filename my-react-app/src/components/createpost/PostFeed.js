@@ -6,16 +6,11 @@ import './PostFeed.css';
 import InteractionBar from '../createpost/intraction/InteractionBar';
 import { motion, AnimatePresence } from 'framer-motion';
 import FollowButton from '../Follow/FollowButton';
-// ❌ Removed: import CommentBox
 
 export default function PostFeed() {
-  const { userData, refreshPostsFlag } = useUser();
+  const { userData } = useUser();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchPosts();
-  }, [refreshPostsFlag]);
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -35,13 +30,16 @@ export default function PostFeed() {
 
     if (error) {
       console.error('❌ Error fetching posts:', error.message);
-      setLoading(false);
-      return;
+    } else {
+      setPosts(data);
     }
 
-    setPosts(data);
     setLoading(false);
   };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
   const handleDelete = async (postId) => {
     const confirm = window.confirm("Are you sure you want to delete this post?");
@@ -57,6 +55,10 @@ export default function PostFeed() {
     } else {
       setPosts(prev => prev.filter(post => post.id !== postId));
     }
+  };
+
+  const handleRefresh = async () => {
+    await fetchPosts(); // 🔁 Refetch posts after like/unlike
   };
 
   const formatTimeAgo = (timestamp) => {
@@ -133,9 +135,12 @@ export default function PostFeed() {
                 )}
 
                 {/* 👍 Like, 💬 Comment, ↪️ Share bar */}
-                <InteractionBar postId={post.id} user={userData} />
-
-                {/* ❌ Removed: <CommentBox postId={post.id} /> */}
+                <InteractionBar
+                  postId={post.id}
+                  userId={userData.id}
+                  likesCount={post.likes_count || 0}
+                  hasLiked={post.has_liked || false}
+                  />
               </motion.div>
             );
           })}

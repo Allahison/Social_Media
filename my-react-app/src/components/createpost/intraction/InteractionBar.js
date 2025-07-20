@@ -4,19 +4,38 @@ import './InteractionBar.css';
 import { FaThumbsUp, FaComment, FaShare } from 'react-icons/fa';
 import CommentModal from './CommentModal/CommentModal';
 
-export default function InteractionBar({ postId, user }) {
+export default function InteractionBar({ postId, userId, onRefresh }) {
   const [likesCount, setLikesCount] = useState(0);
   const [hasLiked, setHasLiked] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showComments, setShowComments] = useState(false);
+  const [showShareOptions, setShowShareOptions] = useState(false);
 
+  // ✅ Real-time like updates
   useEffect(() => {
-    if (user && postId) {
-      fetchLikes();
-    }
-  }, [user, postId]);
+    if (!userId || !postId) return;
 
-  // ✅ Fetch likes from database
+    fetchLikes();
+
+    const subscription = supabase
+      .channel('likes_channel')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'likes',
+          filter: `post_id=eq.${postId}`,
+        },
+        () => fetchLikes()
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(subscription);
+    };
+  }, [userId, postId]);
+
   const fetchLikes = async () => {
     const { data, error } = await supabase
       .from('likes')
@@ -25,52 +44,55 @@ export default function InteractionBar({ postId, user }) {
 
     if (!error) {
       setLikesCount(data.length);
-      setHasLiked(data.some((like) => like.user_id === user.id));
+      setHasLiked(data.some((like) => like.user_id === userId));
     } else {
       console.error('❌ Error fetching likes:', error.message);
     }
+
     setLoading(false);
   };
 
-  // ✅ Toggle Like/Unlike
   const toggleLike = async () => {
-    if (!user || !postId) return;
+    if (!userId || !postId) return;
     setLoading(true);
 
-    if (hasLiked) {
-      const { error } = await supabase
-        .from('likes')
-        .delete()
-        .match({ post_id: postId, user_id: user.id });
+    try {
+      if (hasLiked) {
+        const { error } = await supabase
+          .from('likes')
+          .delete()
+          .match({ post_id: postId, user_id: userId });
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('likes')
+          .insert([{ post_id: postId, user_id: userId }]);
+        if (error) throw error;
+      }
 
-      if (error) console.error('❌ Unlike error:', error.message);
-    } else {
-      const { error } = await supabase
-        .from('likes')
-        .insert([{ post_id: postId, user_id: user.id }]);
-
-      if (error) console.error('❌ Like error:', error.message);
+      await fetchLikes();
+      if (onRefresh) onRefresh(); // ✅ Trigger parent to update
+    } catch (err) {
+      console.error('❌ Like/unlike failed:', err.message);
     }
 
-    await fetchLikes();
     setLoading(false);
   };
 
-  // ✅ Toggle Comment Modal
-  const toggleComments = () => {
-    setShowComments((prev) => !prev);
-  };
+  const toggleComments = () => setShowComments((prev) => !prev);
+  const handleShare = () => setShowShareOptions((prev) => !prev);
 
-  // ✅ Placeholder share handler
-  const handleShare = () => {
-    navigator.clipboard.writeText(`${window.location.href}#post-${postId}`);
-    alert('🔗 Post link copied to clipboard!');
+  const postLink = `${window.location.origin}/post/${postId}`;
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(postLink);
+    alert('🔗 Post link copied!');
+    setShowShareOptions(false);
   };
 
   return (
     <>
       <div className="interaction-bar">
-        {/* ✅ Likes Count Display */}
         {likesCount > 0 && (
           <div className="like-count-display">
             <FaThumbsUp className="blue-icon" />
@@ -80,7 +102,6 @@ export default function InteractionBar({ postId, user }) {
 
         <hr className="separator" />
 
-        {/* ✅ Action Buttons */}
         <div className="post-actions">
           <button
             className={`action-button ${hasLiked ? 'liked' : ''}`}
@@ -90,27 +111,47 @@ export default function InteractionBar({ postId, user }) {
             <FaThumbsUp /> {hasLiked ? 'Liked' : 'Like'}
           </button>
 
-          <button
-            className="action-button"
-            onClick={toggleComments}
-          >
+          <button className="action-button" onClick={toggleComments}>
             <FaComment /> Comment
           </button>
 
-          <button
-            className="action-button"
-            onClick={handleShare}
-          >
+          <button className="action-button" onClick={handleShare}>
             <FaShare /> Share
           </button>
         </div>
+
+        {showShareOptions && (
+          <div className="share-options">
+            <a
+              href={`https://api.whatsapp.com/send?text=${encodeURIComponent(postLink)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              📱 WhatsApp
+            </a>
+            <a
+              href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postLink)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              📘 Facebook
+            </a>
+            <a
+              href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(postLink)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              🐦 Twitter
+            </a>
+            <button onClick={handleCopyLink}>🔗 Copy Link</button>
+          </div>
+        )}
       </div>
 
-      {/* ✅ Comment Modal */}
       {showComments && (
         <CommentModal
           postId={postId}
-          user={user}
+          userId={userId}
           onClose={() => setShowComments(false)}
         />
       )}
