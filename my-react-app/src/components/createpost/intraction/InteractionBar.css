@@ -1,0 +1,38 @@
+/* Action buttons container */
+.post-actions {
+  display: flex;
+  justify-content: space-between; /* ← spreads buttons like Facebook */
+  padding: 5px 0;
+  width: 100%;
+}
+
+/* Each button styling */
+.action-button {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #65676b;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+  border-radius: 6px;
+}
+
+.action-button:hover {
+  background-color: #f0f2f5;
+  color: #1877f2;
+}
+
+.action-button svg {
+  font-size: 16px;
+}
+
+.liked {
+  color: #1877f2;
+}

@@ -1,0 +1,133 @@
+/* SignupPage.css */
+
+.signup-page-container {
+  display: flex;
+  height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Left panel */
+.signup-left-panel {
+  flex: 1;
+  background-color: #f0f4ff;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #333;
+}
+
+.signup-left-panel .brand-title {
+  font-size: 2.5rem;
+  color: #4b6cb7;
+  margin-bottom: 1rem;
+}
+
+.signup-left-panel .brand-subtitle {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.signup-left-panel .illustration {
+  width: 100%;
+  max-width: 400px;
+  margin-top: 30px;
+}
+
+/* Right panel */
+.signup-right-panel {
+  flex: 1;
+  background-color: #fff;
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.signup-form {
+  width: 100%;
+  max-width: 400px;
+  background-color: #fafafa;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.signup-form .form-logo {
+  width: 60px;
+  margin-bottom: 20px;
+}
+
+.signup-form .form-title {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+  text-align: center;
+}
+
+.signup-form .form-error {
+  color: red;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.signup-form .form-input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.signup-form .form-button {
+  width: 100%;
+  background-color: #4b6cb7;
+  color: white;
+  padding: 12px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.signup-form .form-button:hover {
+  background-color: #3a56a1;
+}
+
+.signup-form .form-footer-text {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 0.95rem;
+}
+
+.signup-form .form-link {
+  color: #4b6cb7;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.signup-form .form-link:hover {
+  text-decoration: underline;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .signup-page-container {
+    flex-direction: column;
+  }
+
+  .signup-left-panel,
+  .signup-right-panel {
+    flex: none;
+    width: 100%;
+    padding: 30px 20px;
+  }
+
+  .signup-left-panel .illustration {
+    display: none;
+  }
+}

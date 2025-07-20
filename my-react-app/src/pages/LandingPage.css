@@ -1,0 +1,127 @@
+/* src/pages/LandingPage.css */
+
+.landing-page {
+  min-height: 100vh;
+  background: #f9f9f9;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.brand {
+  font-size: 3.5rem;
+  font-weight: bold;
+  color: #2563eb;
+}
+
+.action-btn {
+  background-color: #2563eb;
+  color: white;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.action-btn:hover {
+  background-color: #1e40af;
+}
+.floating-action-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background-color: rgba(37, 99, 235, 0.85); /* semi-transparent blue */
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease-in-out;
+}
+
+.floating-action-btn:hover {
+  background-color: rgba(29, 78, 216, 0.9);
+}
+
+/* Carousel Styles */
+.carousel-container {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  overflow: hidden;
+}
+
+.carousel-image {
+  width: 100%;
+  height: 500px;
+  object-fit: cover;
+  opacity: 0;
+  position: absolute;
+  transition: opacity 1s ease-in-out;
+  top: 0;
+  left: 0;
+  z-index: 0;
+}
+
+.carousel-image.active {
+  opacity: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.carousel-overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0rem 5rem;
+  background: rgba(0, 0, 0, 0.4);
+  color: white;
+  backdrop-filter: blur(4px);
+}
+
+.overlay-title {
+  font-size: 4.25rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.overlay-text {
+  font-size: 1.125rem;
+  line-height: 1.8;
+}
+
+/* Optional Section */
+.main-content {
+  text-align: center;
+  margin-top: 3rem;
+  padding: 2rem;
+}
+
+.headline {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.subtext {
+  font-size: 1.125rem;
+  color: #6b7280;
+  margin-top: 0.5rem;
+}

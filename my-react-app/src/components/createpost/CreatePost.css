@@ -1,0 +1,187 @@
+/* Main Container */
+.create-post-container {
+  background: white;
+  padding: 1rem;
+  border-radius: 12px;
+  max-width: 600px;
+  margin: 1rem auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Collapsed View */
+.create-post-collapsed {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+}
+
+.create-post-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.create-post-collapsed input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: #f3f4f6;
+  border-radius: 999px;
+  border: none;
+  pointer-events: none;
+}
+
+/* Expanded (Modal) View */
+body.modal-open {
+  overflow: hidden;
+}
+
+.post-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.post-modal {
+  background-color: white;
+  width: 100%;
+  max-width: 600px;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease-in-out;
+  max-height: 90vh;
+  overflow-y: auto;
+
+  /* Hide scrollbars */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+.post-modal::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}
+
+.post-modal::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+.post-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.post-modal textarea,
+.create-post-expanded textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 1rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  margin-bottom: 1rem;
+  resize: vertical;
+}
+
+.media-preview {
+  margin-top: 10px;
+  font-size: 0.875rem;
+  color: #555;
+}
+
+.create-post-actions,
+.post-modal-actions {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.create-post-actions button,
+.post-modal-actions button {
+  flex: 1 1 48%;
+  padding: 0.6rem;
+  background-color: #e0e7ff;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.create-post-actions button:hover,
+.post-modal-actions button:hover {
+  background-color: #c7d2fe;
+}
+
+/* Footer with Cancel + Post */
+.post-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* Beautiful Cancel button */
+.post-modal-footer button:first-child {
+  background-color: #f3f4f6;
+  color: #333;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.post-modal-footer button:first-child:hover {
+  background-color: #e5e7eb;
+}
+
+/* Post Button */
+.post-button {
+  margin-top: 1rem;
+  width: 100%;
+  background-color: #6366f1;
+  color: white;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+}
+
+.post-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.hidden {
+  display: none;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,235 @@
+.comment-box.always-show {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  max-width: 700px;
+  margin: 20px auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.comment-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.comment-input-wrapper {
+  position: relative;
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  padding: 3px;
+  background: #fefefe;
+  transition: border-color 0.3s ease;
+}
+
+.comment-input-wrapper textarea {
+  width: 100%;
+  resize: none;
+  min-height: 10px;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  font-family: inherit;
+  background: transparent;
+  padding-right: 80px;
+}
+
+.comment-input-wrapper:focus-within {
+  border-color: #0077ff;
+  box-shadow: 0 0 8px #0077ff33;
+}
+
+.post-button {
+  width: 5rem;
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  background: linear-gradient(135deg, #221f7e, #00c6ff);
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 12px rgba(0, 119, 255, 0.2);
+  z-index: 10;
+}
+
+.post-button:disabled {
+  background: #e0e0e0;
+  color: #999;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.post-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 119, 255, 0.3);
+  background: linear-gradient(135deg, #005bcc, #00aaff);
+}
+
+
+.comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 6px;
+  overflow-x: hidden; /* ✅ Prevent horizontal scroll */
+  word-wrap: break-word;
+}
+
+.comment {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #ffffffcc;
+  padding: 10px 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  animation: slideIn 0.3s ease;
+  max-width: 100%; /* ✅ Prevent overflow */
+  overflow-wrap: break-word; /* ✅ Ensure long words break */
+  word-break: break-word;
+}
+
+.comment-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid #0077ff;
+}
+
+.comment strong {
+  font-size: 0.95rem;
+  color: #333;
+  display: block;
+  word-break: break-word;
+}
+
+.comment p {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  color: #555;
+  word-break: break-word;
+}
+
+.no-comments {
+  color: #777;
+  font-style: italic;
+  text-align: center;
+}
+.comment-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+
+.edit-comment-button,
+.delete-comment-button {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  color: #888;
+}
+
+.edit-comment-button:hover {
+  color: #0077ff;
+}
+
+.delete-comment-button:hover {
+  color: #ff4d4f;
+}
+
+.edit-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.edit-textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 60px;
+  padding: 8px 10px;
+  font-size: 0.95rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-family: inherit;
+  background: #f9f9f9;
+  outline: none;
+  transition: border 0.2s ease;
+}
+
+.edit-textarea:focus {
+  border-color: #0077ff;
+  box-shadow: 0 0 4px #0077ff55;
+}
+
+.edit-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.save-btn,
+.cancel-btn {
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.save-btn {
+  background: #0077ff;
+  color: white;
+}
+
+.save-btn:hover {
+  background: #005bcc;
+}
+
+.cancel-btn {
+  background: #eee;
+  color: #333;
+}
+
+.cancel-btn:hover {
+  background: #ddd;
+}
+
+
+
+@keyframes slideIn {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    transform: scale(0.98);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
