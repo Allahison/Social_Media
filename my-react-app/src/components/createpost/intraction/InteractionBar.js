@@ -8,7 +8,7 @@ export default function InteractionBar({ postId, user }) {
   const [likesCount, setLikesCount] = useState(0);
   const [hasLiked, setHasLiked] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [showComments, setShowComments] = useState(false); // ✅ Renamed for clarity
+  const [showComments, setShowComments] = useState(false);
 
   useEffect(() => {
     if (user && postId) {
@@ -16,6 +16,7 @@ export default function InteractionBar({ postId, user }) {
     }
   }, [user, postId]);
 
+  // ✅ Fetch likes from database
   const fetchLikes = async () => {
     const { data, error } = await supabase
       .from('likes')
@@ -28,10 +29,10 @@ export default function InteractionBar({ postId, user }) {
     } else {
       console.error('❌ Error fetching likes:', error.message);
     }
-
     setLoading(false);
   };
 
+  // ✅ Toggle Like/Unlike
   const toggleLike = async () => {
     if (!user || !postId) return;
     setLoading(true);
@@ -41,11 +42,13 @@ export default function InteractionBar({ postId, user }) {
         .from('likes')
         .delete()
         .match({ post_id: postId, user_id: user.id });
+
       if (error) console.error('❌ Unlike error:', error.message);
     } else {
       const { error } = await supabase
         .from('likes')
         .insert([{ post_id: postId, user_id: user.id }]);
+
       if (error) console.error('❌ Like error:', error.message);
     }
 
@@ -53,14 +56,21 @@ export default function InteractionBar({ postId, user }) {
     setLoading(false);
   };
 
+  // ✅ Toggle Comment Modal
   const toggleComments = () => {
     setShowComments((prev) => !prev);
+  };
+
+  // ✅ Placeholder share handler
+  const handleShare = () => {
+    navigator.clipboard.writeText(`${window.location.href}#post-${postId}`);
+    alert('🔗 Post link copied to clipboard!');
   };
 
   return (
     <>
       <div className="interaction-bar">
-        {/* Like Count */}
+        {/* ✅ Likes Count Display */}
         {likesCount > 0 && (
           <div className="like-count-display">
             <FaThumbsUp className="blue-icon" />
@@ -70,34 +80,33 @@ export default function InteractionBar({ postId, user }) {
 
         <hr className="separator" />
 
-        {/* Action Buttons */}
+        {/* ✅ Action Buttons */}
         <div className="post-actions">
           <button
             className={`action-button ${hasLiked ? 'liked' : ''}`}
             onClick={toggleLike}
             disabled={loading}
           >
-            <FaThumbsUp />
-            {hasLiked ? 'Liked' : 'Like'}
+            <FaThumbsUp /> {hasLiked ? 'Liked' : 'Like'}
           </button>
 
           <button
             className="action-button"
-            onClick={toggleComments} // ✅ Toggle comments
+            onClick={toggleComments}
           >
             <FaComment /> Comment
           </button>
 
           <button
             className="action-button"
-            onClick={() => alert('🔗 Share feature coming soon')}
+            onClick={handleShare}
           >
             <FaShare /> Share
           </button>
         </div>
       </div>
 
-      {/* ✅ Comment Modal Render */}
+      {/* ✅ Comment Modal */}
       {showComments && (
         <CommentModal
           postId={postId}
