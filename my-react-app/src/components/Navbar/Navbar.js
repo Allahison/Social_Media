@@ -10,7 +10,7 @@ import { supabase } from '../../supabaseClient';
 import { useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
 import NotificationList from '../Follow/NotificationList';
-
+import CommentNotification from '../createpost/intraction/CommentModal/CommentNotification';
 
 export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -126,11 +126,11 @@ export default function Navbar() {
         </div>
 
         {showNotifications && (
-         
-  <div className="notification-dropdown">
-    <NotificationList setNotificationCount={setNotificationCount} />
-  </div>
-)}
+          <div className="notification-dropdown">
+          
+            <NotificationList setNotificationCount={setNotificationCount} />
+          </div>
+        )}
         {isDashboard && (
           <div className="nav-circle nav-user" onClick={toggleDropdown}>
             <img src={avatarUrl} alt="Avatar" className="nav-avatar" />

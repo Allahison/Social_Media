@@ -11,7 +11,6 @@ export default function CommentBox({ postId }) {
   const [inputFocused, setInputFocused] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editedText, setEditedText] = useState('');
-
   const inputRef = useRef(null);
 
   const fetchComments = async () => {
@@ -39,19 +38,61 @@ export default function CommentBox({ postId }) {
   const handleSubmit = async () => {
     if (!commentText.trim()) return;
 
-    const { error } = await supabase.from('comments').insert([
-      {
-        user_id: userData.id,
-        post_id: postId,
-        comment: commentText.trim(),
-      },
-    ]);
+    try {
+      // ✅ Step 1: Insert comment
+      const { data: insertedComment, error: insertError } = await supabase
+        .from('comments')
+        .insert([
+          {
+            post_id: postId,
+            user_id: userData.id,
+            comment: commentText.trim(),
+            created_at: new Date().toISOString(),
+          },
+        ])
+        .select()
+        .single();
 
-    if (error) {
-      console.error('❌ Error posting comment:', error.message);
-    } else {
+      if (insertError) {
+        console.error('❌ Error posting comment:', insertError.message);
+        return;
+      }
+
       setCommentText('');
+
+      // ✅ Step 2: Get Post Owner
+      const { data: postData, error: postError } = await supabase
+        .from('posts')
+        .select('user_id')
+        .eq('id', postId)
+        .single();
+
+      if (postError) {
+        console.error('❌ Error getting post owner:', postError.message);
+        return;
+      }
+
+      // ✅ Step 3: Insert Notification
+      if (postData?.user_id && postData.user_id !== userData.id) {
+        const { error: notifError } = await supabase.from('comment_notifications').insert([
+          {
+            sender_id: userData.id,
+            receiver_id: postData.user_id,
+            post_id: postId,
+            comment_id: insertedComment.id,
+            type: 'comment',
+            created_at: new Date().toISOString(),
+          },
+        ]);
+
+        if (notifError) {
+          console.error('❌ Error sending comment notification:', notifError.message);
+        }
+      }
+
       await fetchComments();
+    } catch (err) {
+      console.error('❌ Unexpected error:', err.message);
     }
   };
 

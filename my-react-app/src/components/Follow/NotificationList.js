@@ -1,3 +1,4 @@
+// src/components/Notifications/NotificationList.jsx
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../supabaseClient';
 import { useUser } from '../../context/UserContext';
@@ -12,33 +13,47 @@ export default function NotificationList({ setNotificationCount }) {
       if (!userData?.id) return;
 
       try {
-        const [{ data: followData, error: followError }, { data: likeData, error: likeError }] =
-          await Promise.all([
-            supabase
-              .from('notifications')
-              .select(`
-                id,
-                type,
-                created_at,
-                sender_id,
-                profiles:profiles!notifications_sender_id_fkey(full_name, avatar_url)
-              `)
-              .eq('receiver_id', userData.id),
+        const [
+          { data: followData, error: followError },
+          { data: likeData, error: likeError },
+          { data: commentData, error: commentError }
+        ] = await Promise.all([
+          supabase
+            .from('notifications')
+            .select(`
+              id,
+              type,
+              created_at,
+              sender_id,
+              profiles:profiles!notifications_sender_id_fkey(full_name, avatar_url)
+            `)
+            .eq('receiver_id', userData.id),
 
-            supabase
-              .from('like_notifications')
-              .select(`
-                id,
-                post_id,
-                created_at,
-                sender_id,
-                profiles:sender_id(full_name, avatar_url)
-              `)
-              .eq('receiver_id', userData.id)
-          ]);
+          supabase
+            .from('like_notifications')
+            .select(`
+              id,
+              post_id,
+              created_at,
+              sender_id,
+              profiles:sender_id(full_name, avatar_url)
+            `)
+            .eq('receiver_id', userData.id),
 
-        if (followError || likeError) {
-          console.error('Notification fetch error:', followError || likeError);
+          supabase
+            .from('comment_notifications')
+            .select(`
+              id,
+              post_id,
+              created_at,
+              sender_id,
+              profiles:sender_id(full_name, avatar_url)
+            `)
+            .eq('receiver_id', userData.id)
+        ]);
+
+        if (followError || likeError || commentError) {
+          console.error('Notification fetch error:', followError || likeError || commentError);
           return;
         }
 
@@ -46,17 +61,24 @@ export default function NotificationList({ setNotificationCount }) {
           id: item.id,
           type: item.type,
           created_at: new Date(item.created_at),
-          sender: item.profiles,
+          sender: item.profiles
         }));
 
         const formattedLikes = (likeData || []).map((item) => ({
           id: item.id,
           type: 'like',
           created_at: new Date(item.created_at),
-          sender: item.profiles,
+          sender: item.profiles
         }));
 
-        const all = [...formattedFollow, ...formattedLikes].sort(
+        const formattedComments = (commentData || []).map((item) => ({
+          id: item.id,
+          type: 'comment',
+          created_at: new Date(item.created_at),
+          sender: item.profiles
+        }));
+
+        const all = [...formattedFollow, ...formattedLikes, ...formattedComments].sort(
           (a, b) => b.created_at - a.created_at
         );
 
@@ -71,24 +93,24 @@ export default function NotificationList({ setNotificationCount }) {
   }, [userData, setNotificationCount]);
 
   const handleClearAll = async () => {
-  try {
-    const [followResult, likeResult] = await Promise.all([
-      supabase.from('notifications').delete().eq('receiver_id', userData.id),
-      supabase.from('like_notifications').delete().eq('receiver_id', userData.id)
-    ]);
+    try {
+      const [followResult, likeResult, commentResult] = await Promise.all([
+        supabase.from('notifications').delete().eq('receiver_id', userData.id),
+        supabase.from('like_notifications').delete().eq('receiver_id', userData.id),
+        supabase.from('comment_notifications').delete().eq('receiver_id', userData.id)
+      ]);
 
-    if (followResult.error || likeResult.error) {
-      console.error('Clear error:', followResult.error || likeResult.error);
-      return;
+      if (followResult.error || likeResult.error || commentResult.error) {
+        console.error('Clear error:', followResult.error || likeResult.error || commentResult.error);
+        return;
+      }
+
+      setNotifications([]);
+      if (setNotificationCount) setNotificationCount(0);
+    } catch (err) {
+      console.error('Unexpected error clearing notifications:', err);
     }
-
-    setNotifications([]);
-    if (setNotificationCount) setNotificationCount(0);
-  } catch (err) {
-    console.error('Unexpected error clearing notifications:', err);
-  }
-};
-
+  };
 
   return (
     <div className="notifications-container">
@@ -117,6 +139,8 @@ export default function NotificationList({ setNotificationCount }) {
                 ? 'followed you.'
                 : notif.type === 'unfollow'
                 ? 'unfollowed you.'
+                : notif.type === 'comment'
+                ? 'commented on your post.'
                 : ''}
               <br />
               <small>
