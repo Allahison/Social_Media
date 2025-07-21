@@ -10,7 +10,7 @@ export default function InteractionBar({ postId, userId, onRefresh }) {
   const [likesCount, setLikesCount] = useState(0);
   const [hasLiked, setHasLiked] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [commentModalOpen, setCommentModalOpen] = useState(false);
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
 
   useEffect(() => {
     fetchLikes();
@@ -36,47 +36,37 @@ export default function InteractionBar({ postId, userId, onRefresh }) {
 
     try {
       if (hasLiked) {
-        // ❌ Unlike
         const { error } = await supabase
           .from('likes')
           .delete()
           .match({ post_id: postId, user_id: userId });
+
         if (error) throw error;
 
-        // ❌ Delete notification
-        const { error: notifDeleteError } = await supabase
+        await supabase
           .from('like_notifications')
           .delete()
           .match({ sender_id: userId, post_id: postId });
-        if (notifDeleteError) {
-          console.error('❌ Failed to delete notification:', notifDeleteError.message);
-        }
       } else {
-        // ✅ Like
         const { error } = await supabase
           .from('likes')
           .insert([{ post_id: postId, user_id: userId }]);
+
         if (error) throw error;
 
-        // ✅ Add like notification
         const { data: postData, error: postError } = await supabase
           .from('posts')
           .select('user_id')
           .eq('id', postId)
           .single();
 
-        if (!postError && postData && postData.user_id !== userId) {
-          const { error: notifInsertError } = await supabase
-            .from('like_notifications')
-            .insert({
-              sender_id: userId,
-              receiver_id: postData.user_id,
-              post_id: postId,
-              type: 'like',
-            });
-          if (notifInsertError) {
-            console.error('❌ Failed to insert notification:', notifInsertError.message);
-          }
+        if (!postError && postData?.user_id !== userId) {
+          await supabase.from('like_notifications').insert({
+            sender_id: userId,
+            receiver_id: postData.user_id,
+            post_id: postId,
+            type: 'like',
+          });
         }
       }
 
@@ -90,33 +80,37 @@ export default function InteractionBar({ postId, userId, onRefresh }) {
   };
 
   const toggleCommentModal = () => {
-    setCommentModalOpen((prev) => !prev);
+    setIsCommentModalOpen(prev => !prev);
   };
 
   return (
-    <div className="interaction-bar">
-      <button
-        className={`interaction-button ${hasLiked ? 'liked' : ''}`}
-        onClick={toggleLike}
-        disabled={loading}
-      >
-        <FaThumbsUp /> {hasLiked ? 'Liked' : 'Like'} ({likesCount})
-      </button>
+    <div className="interaction-wrapper">
+      <div className="interaction-bar">
+        <button
+          className={`interaction-button ${hasLiked ? 'liked' : ''}`}
+          onClick={toggleLike}
+          disabled={loading}
+        >
+          <FaThumbsUp /> {hasLiked ? 'Liked' : 'Like'} ({likesCount})
+        </button>
 
-      <button className="interaction-button" onClick={toggleCommentModal}>
-        <FaComment /> Comment
-      </button>
+        <button className="interaction-button" onClick={toggleCommentModal}>
+          <FaComment /> Comment
+        </button>
 
-      <button className="interaction-button">
-        <FaShare /> Share
-      </button>
+        <button className="interaction-button">
+          <FaShare /> Share
+        </button>
+      </div>
 
-      {commentModalOpen && (
-        <CommentModal
-          postId={postId}
-          userId={userId}
-          onClose={() => setCommentModalOpen(false)}
-        />
+      {isCommentModalOpen && (
+        <div className="comment-modal-container">
+          <CommentModal
+            postId={postId}
+            userId={userId}
+            onClose={() => setIsCommentModalOpen(false)}
+          />
+        </div>
       )}
     </div>
   );
