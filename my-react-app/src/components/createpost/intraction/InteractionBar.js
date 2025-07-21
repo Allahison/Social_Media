@@ -5,12 +5,14 @@ import { supabase } from '@/supabaseClient';
 import './InteractionBar.css';
 import { FaThumbsUp, FaComment, FaShare } from 'react-icons/fa';
 import CommentModal from '../intraction/CommentModal/CommentModal';
+import ShareModal from '../intraction/ShareModal/ShareModal';
 
 export default function InteractionBar({ postId, userId, onRefresh }) {
   const [likesCount, setLikesCount] = useState(0);
   const [hasLiked, setHasLiked] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   useEffect(() => {
     fetchLikes();
@@ -36,23 +38,10 @@ export default function InteractionBar({ postId, userId, onRefresh }) {
 
     try {
       if (hasLiked) {
-        const { error } = await supabase
-          .from('likes')
-          .delete()
-          .match({ post_id: postId, user_id: userId });
-
-        if (error) throw error;
-
-        await supabase
-          .from('like_notifications')
-          .delete()
-          .match({ sender_id: userId, post_id: postId });
+        await supabase.from('likes').delete().match({ post_id: postId, user_id: userId });
+        await supabase.from('like_notifications').delete().match({ sender_id: userId, post_id: postId });
       } else {
-        const { error } = await supabase
-          .from('likes')
-          .insert([{ post_id: postId, user_id: userId }]);
-
-        if (error) throw error;
+        await supabase.from('likes').insert([{ post_id: postId, user_id: userId }]);
 
         const { data: postData, error: postError } = await supabase
           .from('posts')
@@ -80,7 +69,11 @@ export default function InteractionBar({ postId, userId, onRefresh }) {
   };
 
   const toggleCommentModal = () => {
-    setIsCommentModalOpen(prev => !prev);
+    setIsCommentModalOpen((prev) => !prev);
+  };
+
+  const toggleShareModal = () => {
+    setIsShareModalOpen((prev) => !prev);
   };
 
   return (
@@ -98,7 +91,7 @@ export default function InteractionBar({ postId, userId, onRefresh }) {
           <FaComment /> Comment
         </button>
 
-        <button className="interaction-button">
+        <button className="interaction-button" onClick={toggleShareModal}>
           <FaShare /> Share
         </button>
       </div>
@@ -111,6 +104,14 @@ export default function InteractionBar({ postId, userId, onRefresh }) {
             onClose={() => setIsCommentModalOpen(false)}
           />
         </div>
+      )}
+
+      {isShareModalOpen && (
+        <ShareModal
+          postId={postId}
+          userId={userId}
+          onClose={() => setIsShareModalOpen(false)}
+        />
       )}
     </div>
   );

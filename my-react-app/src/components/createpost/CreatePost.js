@@ -191,7 +191,7 @@ export default function CreatePost() {
               <button
                 onClick={handlePost}
                 disabled={uploading || (!content && !media)}
-                className="post-button"
+                className="createpost-button"
               >
                 {uploading ? 'Posting...' : 'Post'}
               </button>
