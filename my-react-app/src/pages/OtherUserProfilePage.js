@@ -139,7 +139,12 @@ export default function OtherUserProfilePage() {
                   <img src={post.media_url} alt="Post" className="post-media" />
                 ))}
 
-              <InteractionBar postId={post.id} userId={post.user_id} />
+             <InteractionBar
+                               postId={post.id}
+                               userId={userData.id}
+                               likesCount={post.likes_count || 0}
+                               hasLiked={post.has_liked || false}
+                               />
             </div>
           ))
         )}

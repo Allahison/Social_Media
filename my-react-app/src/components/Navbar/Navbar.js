@@ -11,6 +11,7 @@ import { useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
 import NotificationList from '../Follow/NotificationList';
 
+
 export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -46,21 +47,31 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Fetch unseen notification count
+  // ✅ Fetch unseen notifications from both tables
   useEffect(() => {
     const fetchUnreadCount = async () => {
-      const { data, error } = await supabase
-        .from('notifications')
-        .select('*', { count: 'exact' })
-        .eq('receiver_id', userData?.id)
-        .eq('read', false);
+      if (!userData?.id) return;
 
-      if (!error) {
-        setNotificationCount(data.length || 0);
-      }
+      const [likeRes, followRes] = await Promise.all([
+        supabase
+          .from('like_notifications')
+          .select('id', { count: 'exact' })
+          .eq('receiver_id', userData.id)
+          .eq('is_read', false),
+
+        supabase
+          .from('notifications')
+          .select('id', { count: 'exact' })
+          .eq('receiver_id', userData.id)
+          .eq('is_read', false)
+      ]);
+
+      const likeCount = likeRes.count || 0;
+      const followCount = followRes.count || 0;
+      setNotificationCount(likeCount + followCount);
     };
 
-    if (userData?.id) fetchUnreadCount();
+    fetchUnreadCount();
   }, [userData]);
 
   const handleLogout = async () => {
@@ -112,11 +123,14 @@ export default function Navbar() {
           {notificationCount > 0 && (
             <span className="notification-badge">{notificationCount}</span>
           )}
-          {showNotifications && (
-            <NotificationList setNotificationCount={setNotificationCount} />
-          )}
         </div>
 
+        {showNotifications && (
+         
+  <div className="notification-dropdown">
+    <NotificationList setNotificationCount={setNotificationCount} />
+  </div>
+)}
         {isDashboard && (
           <div className="nav-circle nav-user" onClick={toggleDropdown}>
             <img src={avatarUrl} alt="Avatar" className="nav-avatar" />

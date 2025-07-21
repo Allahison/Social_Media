@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { supabase } from '../../supabaseClient';
 import { useUser } from '../../context/UserContext';
 import './NotificationList.css';
@@ -8,43 +8,87 @@ export default function NotificationList({ setNotificationCount }) {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-    const fetchNotifications = async () => {
-      const { data, error } = await supabase
-        .from('notifications')
-        .select(`
-          id,
-          type,
-          created_at,
-          read,
-          sender_id,
-          profiles:profiles!notifications_sender_id_fkey(full_name, avatar_url)
-        `)
-        .eq('receiver_id', userData.id)
-        .order('created_at', { ascending: false });
+    const fetchAllNotifications = async () => {
+      if (!userData?.id) return;
 
-      if (error) {
-        console.error('Error fetching notifications:', error);
-      } else {
-        setNotifications(data);
-        setNotificationCount(data.length); // Update count in Navbar
+      try {
+        const [{ data: followData, error: followError }, { data: likeData, error: likeError }] =
+          await Promise.all([
+            supabase
+              .from('notifications')
+              .select(`
+                id,
+                type,
+                created_at,
+                sender_id,
+                profiles:profiles!notifications_sender_id_fkey(full_name, avatar_url)
+              `)
+              .eq('receiver_id', userData.id),
+
+            supabase
+              .from('like_notifications')
+              .select(`
+                id,
+                post_id,
+                created_at,
+                sender_id,
+                profiles:sender_id(full_name, avatar_url)
+              `)
+              .eq('receiver_id', userData.id)
+          ]);
+
+        if (followError || likeError) {
+          console.error('Notification fetch error:', followError || likeError);
+          return;
+        }
+
+        const formattedFollow = (followData || []).map((item) => ({
+          id: item.id,
+          type: item.type,
+          created_at: new Date(item.created_at),
+          sender: item.profiles,
+        }));
+
+        const formattedLikes = (likeData || []).map((item) => ({
+          id: item.id,
+          type: 'like',
+          created_at: new Date(item.created_at),
+          sender: item.profiles,
+        }));
+
+        const all = [...formattedFollow, ...formattedLikes].sort(
+          (a, b) => b.created_at - a.created_at
+        );
+
+        setNotifications(all);
+        if (setNotificationCount) setNotificationCount(all.length);
+      } catch (err) {
+        console.error('Unexpected error fetching notifications:', err);
       }
     };
 
-    if (userData?.id) fetchNotifications();
+    fetchAllNotifications();
   }, [userData, setNotificationCount]);
 
   const handleClearAll = async () => {
-    const { error } = await supabase
-      .from('notifications')
-      .delete()
-      .eq('receiver_id', userData.id);
+  try {
+    const [followResult, likeResult] = await Promise.all([
+      supabase.from('notifications').delete().eq('receiver_id', userData.id),
+      supabase.from('like_notifications').delete().eq('receiver_id', userData.id)
+    ]);
 
-    if (error) console.error('Error clearing notifications:', error);
-    else {
-      setNotifications([]);
-      setNotificationCount(0); // Reset count in Navbar
+    if (followResult.error || likeResult.error) {
+      console.error('Clear error:', followResult.error || likeResult.error);
+      return;
     }
-  };
+
+    setNotifications([]);
+    if (setNotificationCount) setNotificationCount(0);
+  } catch (err) {
+    console.error('Unexpected error clearing notifications:', err);
+  }
+};
+
 
   return (
     <div className="notifications-container">
@@ -54,22 +98,38 @@ export default function NotificationList({ setNotificationCount }) {
           Clear All
         </button>
       </div>
-      {notifications.map((notif) => (
-        <div key={notif.id} className="notification-card">
-          <img src={notif.profiles?.avatar_url || '/default-avatar.png'} alt="Avatar" />
-          <span>
-            <strong>{notif.profiles?.full_name}</strong>{' '}
-            {notif.type === 'follow' ? 'followed you' : 'unfollowed you'}
-          </span>
-          <small>
-            {new Date(notif.created_at).toLocaleString('en-PK', {
-              dateStyle: 'medium',
-              timeStyle: 'short',
-              timeZone: 'Asia/Karachi'
-            })}
-          </small>
-        </div>
-      ))}
+
+      {notifications.length === 0 ? (
+        <p>No notifications</p>
+      ) : (
+        notifications.map((notif) => (
+          <div key={notif.id} className="notification-card">
+            <img
+              src={notif.sender?.avatar_url || '/default-avatar.png'}
+              alt="Avatar"
+              className="avatar"
+            />
+            <div className="notification-text">
+              <strong>{notif.sender?.full_name}</strong>{' '}
+              {notif.type === 'like'
+                ? 'liked your post.'
+                : notif.type === 'follow'
+                ? 'followed you.'
+                : notif.type === 'unfollow'
+                ? 'unfollowed you.'
+                : ''}
+              <br />
+              <small>
+                {notif.created_at.toLocaleString('en-PK', {
+                  dateStyle: 'medium',
+                  timeStyle: 'short',
+                  timeZone: 'Asia/Karachi'
+                })}
+              </small>
+            </div>
+          </div>
+        ))
+      )}
     </div>
   );
 }
