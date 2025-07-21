@@ -6,6 +6,8 @@ import './PostFeed.css';
 import InteractionBar from '../createpost/intraction/InteractionBar';
 import { motion, AnimatePresence } from 'framer-motion';
 import FollowButton from '../Follow/FollowButton';
+import PostFeedLoader from './PostFeedLoader';
+import Loader from '../Loader';
 
 export default function PostFeed() {
   const { userData } = useUser();
@@ -72,13 +74,14 @@ export default function PostFeed() {
     return posted.toLocaleDateString();
   };
 
-  if (!userData) return <p>Loading user...</p>;
+  if (!userData) return <Loader />;
 
   return (
     <div className="post-feed-container">
       <FollowButton />
       {loading ? (
-        <p>Loading posts...</p>
+         <PostFeedLoader />
+      
       ) : posts.length === 0 ? (
         <p>No posts available.</p>
       ) : (

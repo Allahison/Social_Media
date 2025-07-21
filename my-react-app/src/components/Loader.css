@@ -1,0 +1,36 @@
+/* Fullscreen centered layout */
+.loader-wrapper {
+  height: 100vh;
+  width: 100%;
+  background-color: #f9fafb; /* Light background for professional look */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Loader ring */
+.glow-loader {
+  width: 64px;
+  height: 64px;
+  border: 6px solid #e5e7eb;
+  border-top: 6px solid #3b82f6; /* Tailwind Blue-500 */
+  border-radius: 50%;
+  animation: spin 1s ease-in-out infinite, pulse 2s ease-in-out infinite alternate;
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Rotation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Subtle glow/pulse */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 rgba(59, 130, 246, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 16px rgba(59, 130, 246, 0.6);
+  }
+}

@@ -1,195 +1,187 @@
-:root {
-  --primary: #0a66c2;
-  --bg: #f3f2ef;
-  --text-dark: #191919;
-  --text-muted: #666666;
-  --card-bg: #ffffff;
-  --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  --max-width: 1120px;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: var(--bg);
-  color: var(--text-color, #333);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  scroll-behavior: smooth;
-  overflow-x: hidden;
-}
-
-
-.dashboard-container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.dashboard-main {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-  width: 100%;
-  max-width: var(--max-width);
-  padding: 2rem 1rem;
-  box-sizing: border-box;
-}
-
-/* Left Sidebar */
-.sidebar-profile {
-  flex: 0 0 260px;
-  background-color: var(--card-bg);
-  border-radius: 12px;
-  box-shadow: var(--shadow);
-  overflow: hidden;
-  position: sticky;
-  top: 80px;
-  height: fit-content;
-}
-
-.profile-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
+/* Reset link underline globally */
+a {
   text-decoration: none;
   color: inherit;
 }
 
-.cover-photo {
+/* Container Layout */
+.dashboard-wrapper {
+  background: #f3f2ef;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  margin-top: 30px;
+}
+
+.dashboard-layout {
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Left Sidebar: Sticky Profile Card */
+.sidebar-left {
+  flex: 0 0 260px;
+  position: sticky;
+  top: 80px;
+  height: fit-content;
+  align-self: flex-start;
+}
+
+/* Profile Summary Card */
+.profile-summary-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  display: block;
+  position: relative;
+}
+
+/* Cover Image */
+.profile-cover {
   width: 100%;
   height: 100px;
   object-fit: cover;
+  display: block;
 }
 
-.avatar-wrapper-enhanced {
-  position: relative;
-  top: -40px;
-  width: 80px;
-  height: 80px;
-  border: 3px solid white;
-  border-radius: 50%;
-  overflow: hidden;
-  background-color: #fff;
-}
-
-.avatar-enhanced {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-}
-
-.user-info {
-  margin-top: -30px;
-  text-align: center;
-  padding: 0 1rem 1rem;
-}
-
-.username {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--text-dark);
-}
-
-.headline {
-  font-size: 14px;
-  color: var(--text-muted);
-  margin-top: 4px;
-  line-height: 1.4;
-}
-
-/* Main Feed */
-.dashboard-content {
-  flex: 1;
-
-  background-color: var(--card-bg);
-  padding: 0rem;
-  border-radius: 12px;
-  box-shadow: var(--shadow);
-  max-height: calc(100vh - 1px);
-  overflow-inline: hidden;
-}
-
-/* Right Sidebar */
-.sidebar-right {
-  flex: 0 0 260px;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  height: fit-content;
-  position: sticky;
-  top: 80px;
-}
-
-.right-card {
-  background-color: var(--card-bg);
-  border-radius: 12px;
-  box-shadow: var(--shadow);
-  padding: 1rem;
-}
-
-.right-card h3 {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text-dark);
-  margin-bottom: 0.75rem;
-}
-
-.contacts-section .contact-item {
+/* Avatar + Info Container */
+.avatar-box {
+  
+  margin-left:3rem;
+  margin-bottom:10rem;
+  position: absolute;
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 0.75rem;
+  gap: 12px;
+  left: 16px;
+  bottom: -20px;
 }
 
-.contact-avatar img {
-  width: 36px;
-  height: 36px;
+/* Avatar */
+.profile-avatar {
+  width: 70px;
+  height: 70px;
+  border: 3px solid #fff;
   border-radius: 50%;
   object-fit: cover;
+  background: #fff;
+}
+.avatar-box img {
+  width:80px;      /* Pehle 70px ya 50px tha, ab chhota */
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff; /* Optional: halka border */
 }
 
-.contact-name {
+/* Profile Info next to Avatar */
+.profile-info {
+
+  margin-left: -5rem;
+  padding: 56px 16px 16px 16px; /* Space for avatar */
+  padding-left: 100px; /* Push text to right of avatar */
+  min-height: 70px;
+}
+
+.profile-name {
+
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d1d1f;
+  margin-bottom:6px;
+  line-height: 1.2;
+}
+
+.profile-tagline {
   font-size: 14px;
-  color: var(--text-dark);
+  color: #666;
+  line-height: 1.3;
 }
 
-/* Responsive Layout */
-@media (max-width: 1024px) {
-  .dashboard-main {
+/* Main Content Area */
+
+.feed-area {
+  flex: 1;
+  max-width: 620px;
+}
+
+/* Right Sidebar: Connections */
+.sidebar-right {
+  flex: 0 0 240px;
+  position: sticky;
+  top: 80px;
+  height: fit-content;
+}
+
+.connections-widget {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.connections-widget h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #1d1d1f;
+}
+
+.connection-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.connection-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.connection-avatar img {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+}
+
+.connection-name {
+  font-size: 14px;
+  color: #333;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 992px) {
+  .dashboard-layout {
     flex-direction: column;
-    align-items: center;
-    gap: 2rem;
+    padding: 16px;
   }
 
-  .sidebar-profile,
-  .sidebar-right,
-  .dashboard-content {
+  .sidebar-left,
+  .sidebar-right {
+    position: relative;
+    top: unset;
     width: 100%;
+  }
+
+  .feed-area {
+    max-width: 100%;
+  }
+
+  .avatar-box {
     position: static;
+    margin-top: -35px;
+    justify-content: center;
   }
 
-  .dashboard-content {
-    max-height: none;
-    overflow-y: visible;
-  }
-}
-
-@media (max-width: 600px) {
-  .username {
-    font-size: 16px;
-  }
-
-  .headline {
-    font-size: 13px;
-  }
-
-  .dashboard-main {
-    padding: 1rem 0.5rem;
+  .profile-info {
+    padding: 16px;
+    padding-top: 40px;
+    text-align: center;
   }
 }

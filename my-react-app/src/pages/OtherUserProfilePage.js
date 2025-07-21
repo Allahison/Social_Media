@@ -5,6 +5,9 @@ import Navbar from '../components/Navbar/Navbar';
 import InteractionBar from '../components/createpost/intraction/InteractionBar';
 import FollowButton from '../components/Follow/FollowButton';
 import { useUser } from '../context/UserContext';
+import Loader from '../components/Loader'; 
+
+
 import './OtherUserProfilePage.css';
 
 export default function OtherUserProfilePage() {
@@ -70,7 +73,7 @@ export default function OtherUserProfilePage() {
     setLoading(false);
   };
 
-  if (loading) return <div className="other-profile-loading">Loading profile...</div>;
+  if (loading)  return <Loader />;
   if (!profile) return <div className="other-profile-error">❌ User not found</div>;
 
   return (

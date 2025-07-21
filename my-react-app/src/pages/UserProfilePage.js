@@ -6,6 +6,7 @@ import { supabase } from '../supabaseClient';
 import PostCard from '../components/PostCard/PostCard';
 import { useFollow } from '../context/FollowContext';
 import Navbar from '../components/Navbar/Navbar';
+import Loader from '../components/Loader';
 // ❌ Removed: import CommentBox
 
 export default function UserProfilePage() {
@@ -84,7 +85,7 @@ export default function UserProfilePage() {
     }
   };
 
-  if (!userData) return <div>Loading user profile...</div>;
+  if (!userData) return <Loader />;
 
   return (
     <div className="user-profile-page">

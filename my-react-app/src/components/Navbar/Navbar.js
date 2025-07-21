@@ -10,7 +10,7 @@ import { supabase } from '../../supabaseClient';
 import { useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
 import NotificationList from '../Follow/NotificationList';
-import CommentNotification from '../createpost/intraction/CommentModal/CommentNotification';
+
 
 export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);

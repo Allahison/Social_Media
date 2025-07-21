@@ -6,17 +6,17 @@ import { supabase } from '../supabaseClient';
 import CreatePost from '../components/createpost/CreatePost';
 import PostFeed from '../components/createpost/PostFeed';
 import Navbar from '../components/Navbar/Navbar';
+import Loader from '../components/Loader';
 import './DashboardPage.css';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
-  const { userData } = useUser(); // This gives you { id, email }
+  const { userData } = useUser();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Redirect if not logged in
   useEffect(() => {
-    if (userData === undefined) return; // still loading
+    if (userData === undefined) return;
     if (userData === null) {
       navigate('/login');
     } else {
@@ -24,7 +24,6 @@ export default function DashboardPage() {
     }
   }, [userData]);
 
-  // ✅ Fetch profile info from Supabase using user ID
   const fetchProfile = async (userId) => {
     const { data, error } = await supabase
       .from('profiles')
@@ -42,7 +41,7 @@ export default function DashboardPage() {
   };
 
   if (userData === undefined || loading) {
-    return <div className="loader">Loading...</div>;
+    return <Loader />;
   }
 
   const avatarUrl = profile?.avatar_url?.trim() || '/assets/default-avatar.png';
@@ -53,47 +52,45 @@ export default function DashboardPage() {
   return (
     <>
       <Helmet><title>Dashboard</title></Helmet>
-
-      <div className="dashboard-container">
+      <div className="dashboard-wrapper">
         <Navbar user={userData} />
-
-        <div className="dashboard-main">
-          {/* ✅ Left Sidebar */}
-          <div className="sidebar-profile">
-            <Link to={`/profile/${userData.id}`} className="profile-card">
-              <img src={coverUrl} alt="Cover" className="cover-photo" />
-              <div className="avatar-wrapper-enhanced">
-                <img src={avatarUrl} alt="Avatar" className="avatar-enhanced" />
+        <div className="dashboard-layout">
+          {/* Left Sidebar */}
+          <aside className="sidebar-left">
+            <Link to={`/profile/${userData.id}`} className="profile-summary-card">
+              <img src={coverUrl} alt="Cover" className="profile-cover" />
+              <div className="avatar-box">
+                <img src={avatarUrl} alt="Avatar" className="profile-avatar" />
               </div>
-              <div className="user-info">
-                <p className="username">{fullName}</p>
-                {description && <p className="headline">{description}</p>}
+              <div className="profile-info">
+                <p className="profile-name">{fullName}</p>
+                {description && <p className="profile-tagline">{description}</p>}
               </div>
             </Link>
-          </div>
+          </aside>
 
-          {/* ✅ Main Content */}
-          <div className="dashboard-content">
+          {/* Main Content */}
+          <main className="feed-area">
             <CreatePost user={userData} />
             <PostFeed user={userData} />
-          </div>
+          </main>
 
-          {/* ✅ Right Sidebar */}
-          <div className="sidebar-right">
-            <div className="right-card">
-              <h3>Contacts</h3>
-              <div className="contacts-section">
+          {/* Right Sidebar */}
+          <aside className="sidebar-right">
+            <div className="connections-widget">
+              <h3>Connections</h3>
+              <div className="connection-list">
                 {['Ahmed Khan', 'Ahsan', 'Saboor'].map((name, i) => (
-                  <div className="contact-item" key={i}>
-                    <div className="contact-avatar">
+                  <div className="connection-item" key={i}>
+                    <div className="connection-avatar">
                       <img src={`/assets/photos/${i + 1}.jpg`} alt={name} />
                     </div>
-                    <span className="contact-name">{name}</span>
+                    <span className="connection-name">{name}</span>
                   </div>
                 ))}
               </div>
             </div>
-          </div>
+          </aside>
         </div>
       </div>
     </>
