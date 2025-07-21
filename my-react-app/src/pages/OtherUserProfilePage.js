@@ -39,7 +39,10 @@ export default function OtherUserProfilePage() {
       .from('posts')
       .select(`
         *,
-        profiles (full_name, avatar_url)
+        author:profiles!fk_posts_user (
+          full_name,
+          avatar_url
+        )
       `)
       .eq('user_id', id)
       .order('created_at', { ascending: false });
@@ -116,12 +119,12 @@ export default function OtherUserProfilePage() {
             <div className="post-card" key={post.id}>
               <div className="post-header">
                 <img
-                  src={post.profiles?.avatar_url || '/default-avatar.png'}
+                  src={post.author?.avatar_url || '/default-avatar.png'}
                   alt="Avatar"
                   className="post-avatar"
                 />
                 <div className="post-user-info">
-                  <h4>{post.profiles?.full_name || 'Unknown User'}</h4>
+                  <h4>{post.author?.full_name || 'Unknown User'}</h4>
                   <p className="post-date">
                     {new Date(post.created_at).toLocaleString()}
                   </p>
@@ -139,12 +142,12 @@ export default function OtherUserProfilePage() {
                   <img src={post.media_url} alt="Post" className="post-media" />
                 ))}
 
-             <InteractionBar
-                               postId={post.id}
-                               userId={userData.id}
-                               likesCount={post.likes_count || 0}
-                               hasLiked={post.has_liked || false}
-                               />
+              <InteractionBar
+                postId={post.id}
+                userId={userData.id}
+                likesCount={post.likes_count || 0}
+                hasLiked={post.has_liked || false}
+              />
             </div>
           ))
         )}
