@@ -78,10 +78,8 @@ export default function PostFeed() {
 
   return (
     <div className="post-feed-container">
-      <FollowButton />
       {loading ? (
-         <PostFeedLoader />
-      
+        <PostFeedLoader />
       ) : posts.length === 0 ? (
         <p>No posts available.</p>
       ) : (
@@ -125,6 +123,13 @@ export default function PostFeed() {
                   )}
                 </div>
 
+                {/* ✅ Show Follow button if it's not the current user's post */}
+                {userData.id !== post.user_id && (
+                  <div className="follow-button-wrapper">
+                    <FollowButton targetUserId={post.user_id} />
+                  </div>
+                )}
+
                 {post.content && <p className="post-content">{post.content}</p>}
 
                 {post.media_url && (
@@ -137,13 +142,12 @@ export default function PostFeed() {
                   )
                 )}
 
-                {/* 👍 Like, 💬 Comment, ↪️ Share bar */}
                 <InteractionBar
                   postId={post.id}
                   userId={userData.id}
                   likesCount={post.likes_count || 0}
                   hasLiked={post.has_liked || false}
-                  />
+                />
               </motion.div>
             );
           })}

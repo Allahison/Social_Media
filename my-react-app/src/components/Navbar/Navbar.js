@@ -1,4 +1,4 @@
-// src/components/Navbar/Navbar.js
+// ✅ UPDATED NAVBAR WITH PROFILE TABLE SEARCH
 import React, { useState, useEffect, useRef } from 'react';
 import './Navbar.css';
 import {
@@ -10,27 +10,26 @@ import { supabase } from '../../supabaseClient';
 import { useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
 import NotificationList from '../Follow/NotificationList';
-
+import UserSearchModal from '../../components/Navbar/UserSearchModal';
 
 export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notificationCount, setNotificationCount] = useState(0);
+  const [searchValue, setSearchValue] = useState('');
+  const [searchedUser, setSearchedUser] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [noResult, setNoResult] = useState(false);
+
   const dropdownRef = useRef(null);
   const bellRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
   const { userData } = useUser();
 
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
+  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
+  const toggleNotifications = () => setShowNotifications(!showNotifications);
 
-  const toggleNotifications = () => {
-    setShowNotifications(!showNotifications);
-  };
-
-  // Close dropdowns when clicked outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
@@ -47,7 +46,6 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // ✅ Fetch unseen notifications from both tables
   useEffect(() => {
     const fetchUnreadCount = async () => {
       if (!userData?.id) return;
@@ -66,9 +64,7 @@ export default function Navbar() {
           .eq('is_read', false)
       ]);
 
-      const likeCount = likeRes.count || 0;
-      const followCount = followRes.count || 0;
-      setNotificationCount(likeCount + followCount);
+      setNotificationCount((likeRes.count || 0) + (followRes.count || 0));
     };
 
     fetchUnreadCount();
@@ -78,6 +74,25 @@ export default function Navbar() {
     const { error } = await supabase.auth.signOut();
     if (!error) navigate('/login');
     else console.error('Logout failed:', error.message);
+  };
+
+  const handleSearch = async (e) => {
+    if (e.key === 'Enter' && searchValue.trim()) {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .ilike('full_name', `%${searchValue.trim()}%`);
+
+      if (error || !data || data.length === 0) {
+        setSearchedUser(null);
+        setNoResult(true);
+        setShowModal(true);
+      } else {
+        setSearchedUser(data[0]);
+        setNoResult(false);
+        setShowModal(true);
+      }
+    }
   };
 
   const avatarUrl = userData?.avatar_url || '/assets/images/default-avatar.png';
@@ -91,7 +106,13 @@ export default function Navbar() {
         <img src="/assets/photos/logo.png" alt="Logo" className="logo" />
         <div className="search-box">
           <FaSearch />
-          <input type="text" placeholder="Search Facebook" />
+          <input
+            type="text"
+            placeholder="Search by username..."
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            onKeyDown={handleSearch}
+          />
         </div>
       </div>
 
@@ -127,10 +148,10 @@ export default function Navbar() {
 
         {showNotifications && (
           <div className="notification-dropdown">
-          
             <NotificationList setNotificationCount={setNotificationCount} />
           </div>
         )}
+
         {isDashboard && (
           <div className="nav-circle nav-user" onClick={toggleDropdown}>
             <img src={avatarUrl} alt="Avatar" className="nav-avatar" />
@@ -167,6 +188,14 @@ export default function Navbar() {
           </div>
         )}
       </div>
+
+      {showModal && (
+        <UserSearchModal
+          user={searchedUser}
+          onClose={() => setShowModal(false)}
+          noResult={noResult}
+        />
+      )}
     </header>
   );
 }

@@ -146,3 +146,8 @@
 .follow-btn:hover {
   opacity: 0.9;
 }
+.follow-button-wrapper {
+  margin-top:-20px;
+  margin-left:30rem;
+  margin-bottom: 0.5rem;
+}
