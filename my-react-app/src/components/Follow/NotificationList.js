@@ -1,4 +1,3 @@
-// src/components/Notifications/NotificationList.jsx
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../supabaseClient';
 import { useUser } from '../../context/UserContext';
@@ -113,46 +112,48 @@ export default function NotificationList({ setNotificationCount }) {
   };
 
   return (
-    <div className="notifications-container">
-      <div className="notif-header">
-        <h2>Notifications</h2>
-        <button className="clear-btn" onClick={handleClearAll}>
-          Clear All
+    <div className="notification-list-wrapper">
+      <div className="notification-header">
+        <span>Notifications</span>
+        <button className="notification-clear-btn" onClick={handleClearAll}>
+          Clear
         </button>
       </div>
 
       {notifications.length === 0 ? (
-        <p>No notifications</p>
+        <p className="no-notification">No notifications</p>
       ) : (
-        notifications.map((notif) => (
-          <div key={notif.id} className="notification-card">
-            <img
-              src={notif.sender?.avatar_url || '/default-avatar.png'}
-              alt="Avatar"
-              className="avatar"
-            />
-            <div className="notification-text">
-              <strong>{notif.sender?.full_name}</strong>{' '}
-              {notif.type === 'like'
-                ? 'liked your post.'
-                : notif.type === 'follow'
-                ? 'followed you.'
-                : notif.type === 'unfollow'
-                ? 'unfollowed you.'
-                : notif.type === 'comment'
-                ? 'commented on your post.'
-                : ''}
-              <br />
-              <small>
-                {notif.created_at.toLocaleString('en-PK', {
-                  dateStyle: 'medium',
-                  timeStyle: 'short',
-                  timeZone: 'Asia/Karachi'
-                })}
-              </small>
+        <div className="notification-scroll">
+          {notifications.map((notif) => (
+            <div key={notif.id} className="notification-card">
+              <img
+                src={notif.sender?.avatar_url || '/assets/default-avatar.png'}
+                alt="Avatar"
+                className="notification-avatar"
+              />
+              <div className="notification-text">
+                <strong>{notif.sender?.full_name}</strong>{' '}
+                {notif.type === 'like'
+                  ? 'liked your post.'
+                  : notif.type === 'follow'
+                  ? 'followed you.'
+                  : notif.type === 'unfollow'
+                  ? 'unfollowed you.'
+                  : notif.type === 'comment'
+                  ? 'commented on your post.'
+                  : 'did something.'}
+                <br />
+                <small className="notification-time">
+                  {notif.created_at.toLocaleString('en-PK', {
+                    dateStyle: 'medium',
+                    timeStyle: 'short',
+                    timeZone: 'Asia/Karachi'
+                  })}
+                </small>
+              </div>
             </div>
-          </div>
-        ))
+          ))}
+        </div>
       )}
     </div>
   );

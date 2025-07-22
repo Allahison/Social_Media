@@ -1,10 +1,9 @@
-// ✅ UPDATED NAVBAR WITH PROFILE TABLE SEARCH
 import React, { useState, useEffect, useRef } from 'react';
 import './Navbar.css';
 import {
   FaHome, FaUserFriends, FaTv, FaStore, FaUsers, FaSearch, FaBell,
   FaFacebookMessenger, FaCaretDown, FaCog, FaQuestionCircle,
-  FaSignOutAlt, FaGamepad
+  FaSignOutAlt, FaGamepad, FaBars, FaTimes
 } from 'react-icons/fa';
 import { supabase } from '../../supabaseClient';
 import { useNavigate, NavLink, useLocation } from 'react-router-dom';
@@ -20,6 +19,7 @@ export default function Navbar() {
   const [searchedUser, setSearchedUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [noResult, setNoResult] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const dropdownRef = useRef(null);
   const bellRef = useRef(null);
@@ -29,6 +29,7 @@ export default function Navbar() {
 
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
   const toggleNotifications = () => setShowNotifications(!showNotifications);
+  const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -116,7 +117,11 @@ export default function Navbar() {
         </div>
       </div>
 
-      <div className="navbar-center">
+      <div className="mobile-menu-icon" onClick={toggleMobileMenu}>
+        {mobileMenuOpen ? <FaTimes /> : <FaBars />}
+      </div>
+
+      <div className={`navbar-center ${mobileMenuOpen ? 'open' : ''}`}>
         <NavLink to="/dashboard" className={({ isActive }) => `nav-icon ${isActive ? 'active' : ''}`}>
           <FaHome />
         </NavLink>
@@ -132,62 +137,54 @@ export default function Navbar() {
         <NavLink to="/groups" className={({ isActive }) => `nav-icon ${isActive ? 'active' : ''}`}>
           <FaUsers />
         </NavLink>
-      </div>
-
-      <div className="navbar-right" ref={dropdownRef}>
         <div className="nav-circle">
           <FaFacebookMessenger />
         </div>
-
         <div className="nav-circle" onClick={toggleNotifications} ref={bellRef} style={{ position: 'relative' }}>
           <FaBell />
           {notificationCount > 0 && (
             <span className="notification-badge">{notificationCount}</span>
           )}
         </div>
-
         {showNotifications && (
           <div className="notification-dropdown">
             <NotificationList setNotificationCount={setNotificationCount} />
           </div>
         )}
-
-        {isDashboard && (
-          <div className="nav-circle nav-user" onClick={toggleDropdown}>
-            <img src={avatarUrl} alt="Avatar" className="nav-avatar" />
-            <FaCaretDown className="dropdown-caret" />
-          </div>
-        )}
-
-        {dropdownOpen && isDashboard && (
-          <div className="dropdown-menu">
-            <div className="dropdown-header">
-              <img src={avatarUrl} alt="Avatar" className="dropdown-avatar" />
-              <div className="dropdown-info">
-                <strong>{fullName}</strong>
-                <small>{email}</small>
-              </div>
-            </div>
-
-            <div className="dropdown-divider" />
-
-            <div className="dropdown-item">
-              <FaCog className="dropdown-icon-left" />
-              Settings
-            </div>
-
-            <div className="dropdown-item">
-              <FaQuestionCircle className="dropdown-icon-left" />
-              Help & Support
-            </div>
-
-            <div className="dropdown-item" onClick={handleLogout}>
-              <FaSignOutAlt className="dropdown-icon-left" />
-              Logout
-            </div>
-          </div>
-        )}
+        <div className="nav-circle nav-user" onClick={toggleDropdown}>
+          <img src={avatarUrl} alt="Avatar" className="nav-avatar" />
+          <FaCaretDown className="dropdown-caret" />
+        </div>
       </div>
+
+      {dropdownOpen && (
+        <div className="dropdown-menu" ref={dropdownRef}>
+          <div className="dropdown-header">
+            <img src={avatarUrl} alt="Avatar" className="dropdown-avatar" />
+            <div className="dropdown-info">
+              <strong>{fullName}</strong>
+              <small>{email}</small>
+            </div>
+          </div>
+
+          <div className="dropdown-divider" />
+
+          <div className="dropdown-item">
+            <FaCog className="dropdown-icon-left" />
+            Settings
+          </div>
+
+          <div className="dropdown-item">
+            <FaQuestionCircle className="dropdown-icon-left" />
+            Help & Support
+          </div>
+
+          <div className="dropdown-item" onClick={handleLogout}>
+            <FaSignOutAlt className="dropdown-icon-left" />
+            Logout
+          </div>
+        </div>
+      )}
 
       {showModal && (
         <UserSearchModal
