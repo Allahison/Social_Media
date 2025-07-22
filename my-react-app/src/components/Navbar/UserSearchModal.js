@@ -5,8 +5,8 @@ import { Link } from 'react-router-dom';
 
 const UserSearchModal = ({ user, onClose, noResult }) => {
   return (
-    <div className="modal-backdrop">
-      <div className="modal-content">
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <button className="close-btn" onClick={onClose}>×</button>
 
         {noResult ? (

@@ -1,65 +1,88 @@
-import React from 'react'
-import './GroupsPage.css'
-import Navbar from '../../components/Navbar/Navbar'
-import { Helmet } from 'react-helmet'
-
-const mockGroups = [
-  {
-    id: 1,
-    name: 'React Developers Pakistan',
-    cover: '/assets/photos/group1.jpg',
-    members: '12K members',
-  },
-  {
-    id: 2,
-    name: 'Freelancers Community',
-    cover: '/assets/photos/group2.jpg',
-    members: '35K members',
-  },
-  {
-    id: 3,
-    name: 'Women Who Code',
-    cover: '/assets/photos/group3.jpg',
-    members: '20K members',
-  },
-]
+import React, { useEffect, useState } from 'react';
+import './GroupsPage.css';
+import Navbar from '../../components/Navbar/Navbar';
+import { Helmet } from 'react-helmet';
+import { supabase } from '../../supabaseClient';
+import { useUser } from '../../context/UserContext';
+import PostFeedLoader from '../../components/createpost/PostFeedLoader';
+import { Link } from 'react-router-dom';
 
 export default function GroupsPage() {
+  const { userData } = useUser();
+  const [friends, setFriends] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (userData?.id) fetchFriends();
+  }, [userData]);
+
+  const fetchFriends = async () => {
+    setLoading(true);
+    try {
+      const { data: following } = await supabase
+        .from('follows')
+        .select('following_id')
+        .eq('follower_id', userData.id);
+
+      const { data: followers } = await supabase
+        .from('follows')
+        .select('follower_id')
+        .eq('following_id', userData.id);
+
+      const followingIds = following?.map(f => f.following_id) || [];
+      const followerIds = followers?.map(f => f.follower_id) || [];
+
+      const mutualIds = followingIds.filter(id => followerIds.includes(id));
+
+      const { data: mutualProfiles } = await supabase
+        .from('profiles')
+        .select('id, full_name, avatar_url, description')
+        .in('id', mutualIds);
+
+      setFriends(mutualProfiles || []);
+    } catch (err) {
+      console.error('Error fetching friends:', err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <Helmet>
-        <title>Groups | InterviewPrep</title>
+        <title>Friends | InterviewPrep</title>
       </Helmet>
-
       <Navbar />
-
       <div className="groups-page">
-        <aside className="groups-sidebar">
-          <h2>Groups</h2>
-          <ul>
-            <li>Your Feed</li>
-            <li>Discover</li>
-            <li>Groups You've Joined</li>
-            <li>Create Group</li>
-          </ul>
-        </aside>
-
         <main className="groups-content">
-          <h3>Suggested for You</h3>
-          <div className="group-grid">
-            {mockGroups.map(group => (
-              <div key={group.id} className="group-card">
-                <img src={group.cover} alt={group.name} className="group-cover" />
-                <div className="group-details">
-                  <h4>{group.name}</h4>
-                  <p>{group.members}</p>
-                  <button className="join-btn">Join Group</button>
+          <h2 className="section-title">Your Friends</h2>
+
+          {loading ? (
+            <PostFeedLoader />
+          ) : friends.length === 0 ? (
+            <p className="no-friends">You have no friends yet. Start connecting!</p>
+          ) : (
+            <div className="friend-grid">
+              {friends.map(friend => (
+                <div key={friend.id} className="friend-card">
+                  <img
+                    src={friend.avatar_url || '/assets/default-avatar.png'}
+                    alt={friend.full_name}
+                    className="friend-avatar"
+                  />
+                  <div className="friend-info">
+                    <h3>{friend.full_name}</h3>
+                    <p>{friend.description || 'No bio yet.'}</p>
+                    <Link to={`/profile/${friend.id}`}>
+                      <button className="friend-btn">View Profile</button>
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </main>
       </div>
     </>
-  )
+  );
 }
