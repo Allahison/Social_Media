@@ -4,6 +4,7 @@ import './VideosPage.css';
 import Navbar from '../../components/Navbar/Navbar';
 import { Helmet } from 'react-helmet';
 import { supabase } from '../../supabaseClient';
+import InteractionBar from '../../components/createpost/intraction/InteractionBar';
 import {
   FaHome,
   FaGamepad,
@@ -23,7 +24,7 @@ export default function VideosPage({ user }) {
   }, []);
 
   const fetchVideos = async () => {
-    const { data: posts, error } = await supabase
+    const { data, error } = await supabase
       .from('posts')
       .select(`
         id,
@@ -32,7 +33,7 @@ export default function VideosPage({ user }) {
         media_type,
         created_at,
         user_id,
-        users: user_id (
+        profile: user_id (
           full_name,
           avatar_url
         )
@@ -43,7 +44,7 @@ export default function VideosPage({ user }) {
     if (error) {
       console.error('Error fetching videos:', error);
     } else {
-      setVideos(posts);
+      setVideos(data);
     }
   };
 
@@ -61,7 +62,7 @@ export default function VideosPage({ user }) {
 
     switch (activeTab) {
       case 'reels':
-        filtered = videos.filter(video => video.media_type === 'video');
+        filtered = videos;
         break;
       case 'gaming':
         filtered = videos.filter(video =>
@@ -78,11 +79,10 @@ export default function VideosPage({ user }) {
 
     if (activeTab === 'home' && searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      const match = filtered.find(video =>
+      filtered = filtered.filter(video =>
         video.content?.toLowerCase().includes(query) ||
-        video.users?.full_name?.toLowerCase().includes(query)
+        video.profile?.full_name?.toLowerCase().includes(query)
       );
-      return match ? [match] : [];
     }
 
     return filtered;
@@ -152,12 +152,12 @@ export default function VideosPage({ user }) {
                   <div key={video.id} className="video-card">
                     <div className="video-user-info">
                       <img
-                        src={video.users?.avatar_url || '/assets/photos/default-user.png'}
+                        src={video.profile?.avatar_url || '/assets/photos/default-user.png'}
                         alt="User"
                         className="video-user-avatar"
                       />
                       <div className="video-user-meta">
-                        <strong>{video.users?.full_name || 'Unknown User'}</strong>
+                        <strong>{video.profile?.full_name || 'Unknown User'}</strong>
                         <small>
                           {new Date(video.created_at).toLocaleDateString()}{' '}
                           {new Date(video.created_at).toLocaleTimeString()}
@@ -168,7 +168,7 @@ export default function VideosPage({ user }) {
                     <video
                       className="video-thumb"
                       controls
-                      poster={video.media_url.replace('.mp4', '.jpg')}
+                      poster={video.media_url?.replace('.mp4', '.jpg')}
                       src={video.media_url}
                     />
 
@@ -180,6 +180,12 @@ export default function VideosPage({ user }) {
                       >
                         ⭐ {savedVideos.some(v => v.id === video.id) ? 'Saved' : 'Save'}
                       </button>
+                      <InteractionBar
+                        postId={video.id}
+                        userId={video.user_id}
+                        type="video"
+                        loggedInUserId={user?.id}
+                      />
                     </div>
                   </div>
                 ))
@@ -235,4 +241,4 @@ export default function VideosPage({ user }) {
       </main>
     </>
   );
-}
+}  
