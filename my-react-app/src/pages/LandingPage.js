@@ -6,7 +6,7 @@ import Footer from '../components/landingpages/Footer/Footer';
 import TeamSection from '../components/landingpages/TeamSection/TeamSection';
 import WhyLearn from '../components/landingpages/learn/WhyLearn';
 import HeroVideo from '../components/HeroVideo/HeroVideo';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 export default function LandingPage() {
   const [user, setUser] = useState(null);
