@@ -7,7 +7,6 @@ import PostCard from '../components/PostCard/PostCard';
 import { useFollow } from '../context/FollowContext';
 import Navbar from '../components/Navbar/Navbar';
 import Loader from '../components/Loader';
-// ❌ Removed: import CommentBox
 
 export default function UserProfilePage() {
   const { userData } = useUser();
@@ -62,6 +61,29 @@ export default function UserProfilePage() {
     }
   };
 
+  const handleDeletePost = async (postId) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this post?');
+    if (!confirmDelete) return;
+
+    try {
+      const { error } = await supabase
+        .from('posts')
+        .delete()
+        .eq('id', postId)
+        .eq('user_id', userData.id); // Ensure user can only delete their own posts
+
+      if (error) {
+        alert('Failed to delete post.');
+        console.error('Delete error:', error);
+      } else {
+        alert('Post deleted successfully!');
+        fetchUserPosts(); // Refresh post list
+      }
+    } catch (err) {
+      console.error('Unexpected error:', err);
+    }
+  };
+
   const fetchFollowUsersDetails = async () => {
     const rawList = followType === 'followers' ? followersList : followingList;
     const userIds = rawList
@@ -91,7 +113,6 @@ export default function UserProfilePage() {
     <div className="user-profile-page">
       <Navbar />
 
-      {/* ✅ Cover photo */}
       {userData.cover_url && (
         <div className="cover-photo-wrapper">
           <img
@@ -137,7 +158,12 @@ export default function UserProfilePage() {
                 currentUserId={userData.id}
                 onDelete={fetchUserPosts}
               />
-              
+              <button
+                className="delete-post-btn"
+                onClick={() => handleDeletePost(post.id)}
+              >
+                🗑 Delete Post
+              </button>
             </div>
           ))
         )}

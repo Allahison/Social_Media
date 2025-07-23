@@ -35,15 +35,8 @@ export default function PostCard({ post, currentUserId, onDelete }) {
           <h4>{displayName}</h4>
           <p className="timestamp">{date}</p>
         </div>
-        {user_id === currentUserId && (
-          <button
-            className="delete-post-btn"
-            onClick={() => onDelete(id)}
-            title="Delete Post"
-          >
-            🗑️
-          </button>
-        )}
+      
+    
       </div>
 
       {content && <p className="post-content">{content}</p>}

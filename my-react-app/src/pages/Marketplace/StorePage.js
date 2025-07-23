@@ -11,6 +11,16 @@ export default function MarketPage() {
   const [selectedPost, setSelectedPost] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState('');
+  const [currentUserId, setCurrentUserId] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setCurrentUserId(user?.id || null);
+    };
+
+    fetchUser();
+  }, []);
 
   useEffect(() => {
     const fetchSellPosts = async () => {
@@ -58,6 +68,23 @@ export default function MarketPage() {
 
   const handleMethodClick = (method) => {
     setSelectedMethod(method);
+  };
+
+  const handleDeletePost = async (postId) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this post?");
+    if (!confirmDelete) return;
+
+    const { error } = await supabase
+      .from('posts')
+      .delete()
+      .eq('id', postId);
+
+    if (error) {
+      alert("Failed to delete post.");
+      console.error(error);
+    } else {
+      setSellPosts(prev => prev.filter(post => post.id !== postId));
+    }
   };
 
   const getAccountInfo = () => {
@@ -141,7 +168,12 @@ export default function MarketPage() {
                   <strong>Contact:</strong> {post.contact || 'N/A'}
                   {post.linkedWithJazzCash === 'yes' && <span> (JazzCash/EasyPaisa)</span>}
                 </p>
+
                 <button className="shop-now-btn" onClick={() => openModal(post)}>Shop Now</button>
+
+                {post.user_id === currentUserId && (
+                  <button className="delete-btn" onClick={() => handleDeletePost(post.id)}>🗑 Delete</button>
+                )}
               </div>
             </div>
           ))}

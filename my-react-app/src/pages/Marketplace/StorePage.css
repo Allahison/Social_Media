@@ -1,67 +1,118 @@
-/* Main page styling */
+/* ===============================
+   🌟 Modern & Beautiful Market Page CSS — Updated Color Scheme
+   =============================== */
+
 .market-page {
-  padding: 2rem;
-  background-color: #f9f9f9;
+  background: linear-gradient(to right, #e8f0ff, #ffffff);
   min-height: 100vh;
+  padding: 2rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Heading */
 .market-heading {
   text-align: center;
   font-size: 2.5rem;
+  font-weight: bold;
   margin-bottom: 2rem;
-  color: #333;
+  color: #2b2b2b;
+
+
 }
 
-/* Grid layout */
+.filter-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.filter-section label {
+  font-weight: 600;
+  color: #444;
+}
+
+.filter-section select {
+  padding: 0.5rem 1rem;
+  border-radius: 30px;
+  border: 2px solid #d1d5db;
+  background-color: #fff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.filter-section select:hover,
+.filter-section select:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+
 .market-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
-  padding: 0 1rem;
 }
 
-/* Product card */
 .product-card {
-  background-color: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .product-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.1);
 }
 
-/* Product image */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.user-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #4a90e2;
+}
+
+.user-name {
+  font-weight: 600;
+  color: #333;
+}
+
+.post-date {
+  font-size: 0.85rem;
+  color: #666;
+}
+
 .product-image {
   width: 100%;
   height: 200px;
   object-fit: cover;
-  border-bottom: 1px solid #eee;
 }
 
 .image-placeholder {
-  width: 100%;
   height: 200px;
-  background-color: #f0f0f0;
-  color: #888;
+  background: #f2f2f2;
   display: flex;
-  align-items: center;
   justify-content: center;
-  font-style: italic;
+  align-items: center;
+  font-size: 1.2rem;
+  color: #aaa;
 }
 
-/* Product details */
 .product-details {
-  padding: 1rem 1.2rem;
+  padding: 1rem;
 }
 
 .product-title {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   font-weight: bold;
   margin-bottom: 0.5rem;
   color: #222;
@@ -71,115 +122,149 @@
 .product-price,
 .product-contact {
   font-size: 0.95rem;
-  color: #555;
-  margin-bottom: 0.4rem;
+  margin: 0.3rem 0;
+  color: #444;
 }
 
-.product-desc strong,
-.product-price strong,
-.product-contact strong {
-  color: #222;
-}
-
-/* Status messages */
-.loading-msg,
-.error-msg,
-.no-posts-msg {
-  text-align: center;
-  font-size: 1.1rem;
-  color: #777;
-  margin-top: 3rem;
-}
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
-}
-
-.user-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #ccc;
-}
-
-.user-name {
-  font-weight: bold;
-  font-size: 14px;
-  margin: 0;
-}
-
-.post-date {
-  font-size: 12px;
-  color: #888;
-  margin: 0;
-}
 .shop-now-btn {
-  background-color: #007bff;
-  color: white;
+  margin-top: 1rem;
+  padding: 0.6rem 1.5rem;
+  background: linear-gradient(to right, #0a7974, #5f7574);
   border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
+  color: white;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
-  margin-top: 12px;
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
 }
+
 .shop-now-btn:hover {
-  background-color: #0056b3;
+  background: linear-gradient(to right, #45b3af, #7cdacc);
+  transform: scale(1.05);
 }
 
 .modal-overlay {
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.5);
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 999;
 }
+
 .modal-content {
-  background: #fff;
-  padding: 24px;
-  border-radius: 16px;
+  background: white;
+  border-radius: 20px;
+  max-width: 500px;
   width: 90%;
-  max-width: 400px;
-  box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+  padding: 2rem;
+  position: relative;
+  animation: fadeIn 0.4s ease-in-out;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
 }
+
+@keyframes fadeIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 .modal-title {
-  font-size: 20px;
-  margin-bottom: 12px;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #222;
+  font-weight: bold;
+  text-align: center;
 }
+
 .payment-options {
-  margin-top: 16px;
+  margin-top: 1.5rem;
 }
+
+.payment-buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
 .payment-buttons button {
-  margin: 4px 8px 8px 0;
-  padding: 8px 12px;
+  padding: 0.7rem 1.4rem;
+  font-size: 1rem;
+  border-radius: 30px;
   border: none;
-  border-radius: 6px;
-  background-color: #f0f0f0;
-  cursor: pointer;
-}
-.payment-buttons button:hover {
-  background-color: #ccc;
-}
-.account-info {
-  margin-top: 12px;
-  padding: 12px;
-  background: #f9f9f9;
-  border-radius: 8px;
-  font-size: 14px;
-}
-.close-btn {
-   background-color: #007bff;
   color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
+  background: linear-gradient(to right, #4a90e2, #50c9c3);
   cursor: pointer;
-  margin-top: 12px;
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
+}
+
+.payment-buttons button:hover {
+  background: linear-gradient(to right, #3578c0, #3ec1c1);
+  transform: translateY(-2px);
+}
+
+.account-info {
+  margin-top: 1rem;
+  background: #f9f9f9;
+  padding: 1rem;
+  border-radius: 15px;
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.close-btn {
+  margin-top: 2rem;
+  background: #ff6b6b;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 30px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.close-btn:hover {
+  background: #ff4e4e;
+  transform: scale(1.05);
+}
+
+.loading-msg,
+.error-msg,
+.no-posts-msg {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 1.1rem;
+  color: #555;
+}
+.delete-btn {
+  background-color: #ff4d4f;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 30px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.delete-btn:hover {
+  background-color: #d9363e;
+  transform: scale(1.05);
 }

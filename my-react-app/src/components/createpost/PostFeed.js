@@ -14,40 +14,38 @@ export default function PostFeed() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchPosts = async () => {
-  setLoading(true);
-  const { data, error } = await supabase
-    .from('posts')
-    .select(`
-      id,
-      user_id,
-      content,
-      media_url,
-      media_type,
-      created_at,
-      username,
-      avatar_url
-    `)
-    .eq('category', 'media') // ✅ Only fetch photo/video posts
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    console.error('❌ Error fetching posts:', error.message);
-  } else {
-    setPosts(data);
-  }
-
-  setLoading(false);
-};
-
-
   useEffect(() => {
     fetchPosts();
   }, []);
 
+  const fetchPosts = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('posts')
+      .select(`
+        id,
+        user_id,
+        content,
+        media_url,
+        media_type,
+        created_at,
+        username,
+        avatar_url
+      `)
+      .eq('category', 'media') // ✅ only media category posts
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('❌ Error fetching posts:', error.message);
+    } else {
+      setPosts(data);
+    }
+    setLoading(false);
+  };
+
   const handleDelete = async (postId) => {
-    const confirm = window.confirm("Are you sure you want to delete this post?");
-    if (!confirm) return;
+    const confirmDelete = window.confirm('Are you sure you want to delete this post?');
+    if (!confirmDelete) return;
 
     const { error } = await supabase
       .from('posts')
@@ -57,12 +55,8 @@ export default function PostFeed() {
     if (error) {
       alert('❌ Failed to delete post: ' + error.message);
     } else {
-      setPosts(prev => prev.filter(post => post.id !== postId));
+      setPosts((prev) => prev.filter((post) => post.id !== postId));
     }
-  };
-
-  const handleRefresh = async () => {
-    await fetchPosts(); // 🔁 Refetch posts after like/unlike
   };
 
   const formatTimeAgo = (timestamp) => {
@@ -83,10 +77,10 @@ export default function PostFeed() {
       {loading ? (
         <PostFeedLoader />
       ) : posts.length === 0 ? (
-        <p>No posts available.</p>
+        <p>No media posts available.</p>
       ) : (
         <AnimatePresence>
-          {posts.map(post => {
+          {posts.map((post) => {
             const avatar = post.avatar_url?.trim() || '/assets/photo/1.jpg';
             const name = post.username?.trim() || 'Anonymous';
             const timeAgo = formatTimeAgo(post.created_at);
@@ -101,6 +95,7 @@ export default function PostFeed() {
                 exit={{ opacity: 0, scale: 0.9, y: 30 }}
                 transition={{ duration: 0.3 }}
               >
+                {/* Post Header */}
                 <div className="post-header">
                   <div className="post-header-left">
                     <Link to={`/user/${post.user_id}`}>
@@ -119,21 +114,24 @@ export default function PostFeed() {
                       className="delete-icon"
                       title="Delete Post"
                       onClick={() => handleDelete(post.id)}
+                      style={{ cursor: 'pointer', fontSize: '18px', color: '#e74c3c' }}
                     >
                       🗑️
                     </div>
                   )}
                 </div>
 
-                {/* ✅ Show Follow button if it's not the current user's post */}
+                {/* Follow Button (if not current user's post) */}
                 {userData.id !== post.user_id && (
                   <div className="follow-button-wrapper">
                     <FollowButton targetUserId={post.user_id} />
                   </div>
                 )}
 
+                {/* Post Content */}
                 {post.content && <p className="post-content">{post.content}</p>}
 
+                {/* Media */}
                 {post.media_url && (
                   post.media_url.endsWith('.mp4') ? (
                     <video className="post-media" controls>
