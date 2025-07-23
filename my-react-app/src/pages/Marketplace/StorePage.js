@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../../supabaseClient';
 import PostFeedLoader from '../../components/createpost/PostFeedLoader';
 import Navebar from '../../components/Navbar/Navbar';
-import './storePage.css';
+import './StorePage.css';
 
 export default function MarketPage() {
   const [sellPosts, setSellPosts] = useState([]);
