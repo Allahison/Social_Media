@@ -1,5 +1,5 @@
 import React from 'react';
-import './WhyJoin.css';
+import './WhyLearn.css';
 
 export default function WhyJoin() {
   return (

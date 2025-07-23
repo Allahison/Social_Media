@@ -210,9 +210,7 @@ export default function GamingPage() {
 
   return (
     <>
-      <Helmet>
-        <title>Gaming</title>
-      </Helmet>
+      
       <Navbar />
 
       <div className="gaming-page">

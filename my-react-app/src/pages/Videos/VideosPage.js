@@ -89,9 +89,7 @@ export default function VideosPage({ user }) {
 
   return (
     <>
-      <Helmet>
-        <title>Watch Videos</title>
-      </Helmet>
+      
 
       <Navbar user={user} />
 
