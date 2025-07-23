@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../supabaseClient';
-import './storepage.css';
+import './storePage.css';
 import PostFeedLoader from '../../components/createpost/PostFeedLoader';
 import Navebar from '../../components/Navbar/Navbar';
 
