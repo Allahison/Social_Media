@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import './VideosPage.css';
 import Navbar from '../../components/Navbar/Navbar';
-import { Helmet } from 'react-helmet-async';
 import { supabase } from '../../supabaseClient';
 import InteractionBar from '../../components/createpost/intraction/InteractionBar';
 import {

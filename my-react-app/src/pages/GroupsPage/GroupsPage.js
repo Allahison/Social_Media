@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './GroupsPage.css';
 import Navbar from '../../components/Navbar/Navbar';
-import { Helmet } from 'react-helmet-async';
 import { supabase } from '../../supabaseClient';
 import { useUser } from '../../context/UserContext';
 import PostFeedLoader from '../../components/createpost/PostFeedLoader';
@@ -49,9 +48,7 @@ export default function GroupsPage() {
 
   return (
     <>
-      <Helmet>
-        <title>Friends | InterviewPrep</title>
-      </Helmet>
+
       <Navbar />
       <div className="groups-page">
         <main className="groups-content">

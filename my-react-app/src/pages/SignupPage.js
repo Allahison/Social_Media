@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import './SignupPage.css';
-import { Helmet } from 'react-helmet-async';
 import logo from '../../public/assets/photos/logo.png';
 import illustration from '../../public/assets/photos/login2.png';
 

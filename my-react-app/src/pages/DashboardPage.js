@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
 import { useUser } from '../context/UserContext';
 import { supabase } from '../supabaseClient';
 import CreatePost from '../components/createpost/CreatePost';
@@ -51,7 +50,7 @@ export default function DashboardPage() {
 
   return (
     <>
-      <Helmet><title>Dashboard</title></Helmet>
+  
       <div className="dashboard-wrapper">
         <Navbar user={userData} />
         <div className="dashboard-layout">
