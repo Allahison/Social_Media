@@ -6,7 +6,6 @@ import Footer from '../components/landingpages/Footer/Footer';
 import TeamSection from '../components/landingpages/TeamSection/TeamSection';
 import WhyLearn from '../components/landingpages/learn/WhyLearn';
 import HeroVideo from '../components/HeroVideo/HeroVideo';
-import { Helmet } from 'react-helmet-async';
 
 export default function LandingPage() {
   const [user, setUser] = useState(null);
@@ -17,42 +16,38 @@ export default function LandingPage() {
 
   return (
     <>
-      <Helmet>
-        <title>Home | Social Sphere</title>
-      </Helmet>
-      <div className="landing-page">
-        {/* Hero Section (Video Background) */}
-        <HeroVideo />
 
-        {/* Floating Get Started Button */}
-        <a
-          href={user ? '/feed' : '/signup'}
-          className="floating-action-btn"
-        >
-          {user ? 'Go to Feed' : 'Join Now'}
-        </a>
+    <div className="landing-page">
+      {/* Hero Section (Video Background) */}
+      <HeroVideo />
 
-        {/* Main Content */}
-        <main className="main-content">
-          <h2 className="headline">Connect. Share. Inspire.</h2>
-          <p className="subtext">
-            Your digital space to express, engage, and grow with the world.
-          </p>
-        </main>
+      {/* Floating Get Started Button */}
+      <a
+        href={user ? '/dashboard' : '/signup'}
+        className="floating-action-btn"
+      >
+        {user ? 'Dashboard' : 'Get Started'}
+      </a>
 
-        {/* Why Learn Section */}
-        <section className="why-learn-wrapper">
-          <WhyLearn />
-        </section>
+      {/* Main Content */}
+      <main className="main-content">
+        <h2 className="headline">Ace Your Interviews</h2>
+        <p className="subtext">AI-powered mock interviews with instant feedback.</p>
+      </main>
 
-        {/* Team Section */}
-        <section className="team-section-wrapper">
-          <TeamSection />
-        </section>
+      {/* Why Learn Section */}
+      <section className="why-learn-wrapper">
+        <WhyLearn />
+      </section>
 
-        {/* Footer */}
-        <Footer />
-      </div>
+      {/* Team Section */}
+      <section className="team-section-wrapper">
+        <TeamSection />
+      </section>
+
+      {/* Footer */}
+      <Footer />
+    </div>
     </>
   );
 }

@@ -45,9 +45,7 @@ export default function SignupPage() {
 
   return (
     <>
-      <Helmet>
-        <title>Signup | CodeCraft</title>
-      </Helmet>
+    
       <div className="login-page-container">
         <div className="login-left-panel">
           <h1 className="brand-title">CodeCraft</h1>

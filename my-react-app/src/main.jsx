@@ -3,6 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import { HelmetProvider } from 'react-helmet-async';
 
 // Context
 import { UserProvider } from "./context/UserContext";
@@ -23,6 +24,7 @@ import { FollowProvider } from './context/FollowContext';
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
+    <HelmetProvider>
     <BrowserRouter>
       <UserProvider>
         <FollowProvider>
@@ -44,5 +46,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         </FollowProvider>
       </UserProvider>
     </BrowserRouter>
+    </HelmetProvider>
   </React.StrictMode>
 );

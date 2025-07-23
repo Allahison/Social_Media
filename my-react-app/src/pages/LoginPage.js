@@ -46,9 +46,7 @@ export default function LoginPage() {
 
   return (
     <>
-      <Helmet>
-        <title>Login | InterviewPrep</title>
-      </Helmet>
+      
       <div className="login-page-container">
         {/* Left Panel */}
         <div className="login-left-panel">
