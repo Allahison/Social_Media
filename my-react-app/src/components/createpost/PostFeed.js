@@ -15,29 +15,31 @@ export default function PostFeed() {
   const [loading, setLoading] = useState(true);
 
   const fetchPosts = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('posts')
-      .select(`
-        id,
-        user_id,
-        content,
-        media_url,
-        media_type,
-        created_at,
-        username,
-        avatar_url
-      `)
-      .order('created_at', { ascending: false });
+  setLoading(true);
+  const { data, error } = await supabase
+    .from('posts')
+    .select(`
+      id,
+      user_id,
+      content,
+      media_url,
+      media_type,
+      created_at,
+      username,
+      avatar_url
+    `)
+    .eq('category', 'media') // ✅ Only fetch photo/video posts
+    .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error('❌ Error fetching posts:', error.message);
-    } else {
-      setPosts(data);
-    }
+  if (error) {
+    console.error('❌ Error fetching posts:', error.message);
+  } else {
+    setPosts(data);
+  }
 
-    setLoading(false);
-  };
+  setLoading(false);
+};
+
 
   useEffect(() => {
     fetchPosts();
