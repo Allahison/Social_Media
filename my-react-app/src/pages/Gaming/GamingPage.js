@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import './GamingPage.css';
 import Navbar from '../../components/Navbar/Navbar';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { FaSearch, FaStar, FaClock, FaPlus } from 'react-icons/fa';
 
 export default function GamingPage() {

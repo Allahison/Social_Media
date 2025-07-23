@@ -50,8 +50,9 @@ a {
 /* Avatar + Info Container */
 .avatar-box {
   
+  
   margin-left:3rem;
-  margin-bottom:10rem;
+  margin-bottom:15rem;
   position: absolute;
   display: flex;
   align-items: center;

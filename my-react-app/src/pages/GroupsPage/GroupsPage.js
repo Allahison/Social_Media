@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './GroupsPage.css';
 import Navbar from '../../components/Navbar/Navbar';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { supabase } from '../../supabaseClient';
 import { useUser } from '../../context/UserContext';
 import PostFeedLoader from '../../components/createpost/PostFeedLoader';

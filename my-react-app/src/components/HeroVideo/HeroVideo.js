@@ -19,9 +19,9 @@ export default function HeroVideo() {
       </video>
 
       <div className="video-overlay">
-        <h1 className="hero-title">Built for Real-World Job Interviews</h1>
+        <h1 className="hero-title">Welcome to Social Sphere</h1>
         <p className="hero-subtitle">
-          Elevate your skills with mock interviews, AI feedback, and coding challenges.
+          Connect, share moments, and express yourself in a creative digital space.
         </p>
       </div>
     </section>
