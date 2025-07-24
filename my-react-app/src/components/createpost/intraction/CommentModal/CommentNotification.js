@@ -1,5 +1,5 @@
 // src/components/Notifications/CommentNotification.jsx
-import React, { useEffect, useState } from 'react';
+/*import React, { useEffect, useState } from 'react';
 import { supabase } from '../../../../supabaseClient';
 import { useUser } from '../../../../context/UserContext';
 import { Link } from 'react-router-dom';
@@ -58,3 +58,4 @@ const CommentNotification = () => {
 };
 
 export default CommentNotification;
+*/

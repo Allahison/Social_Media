@@ -9,19 +9,41 @@ import HeroVideo from '../components/HeroVideo/HeroVideo';
 
 export default function LandingPage() {
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => setUser(user));
+    // Check user session
+    const getUser = async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (data?.user && !error) {
+        setUser(data.user);
+      } else {
+        setUser(null); // new or logged out user
+      }
+      setIsLoading(false);
+    };
+
+    getUser();
+
+    // Optional: Re-check on auth state change
+    const { data: listener } = supabase.auth.onAuthStateChange(() => {
+      getUser();
+    });
+
+    // Cleanup
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, []);
 
-  return (
-    <>
+  if (isLoading) return null; // ⏳ Optionally show loader here
 
+  return (
     <div className="landing-page">
-      {/* Hero Section (Video Background) */}
+      {/* Hero Section */}
       <HeroVideo />
 
-      {/* Floating Get Started Button */}
+      {/* Floating Action Button */}
       <a
         href={user ? '/dashboard' : '/signup'}
         className="floating-action-btn"
@@ -48,6 +70,5 @@ export default function LandingPage() {
       {/* Footer */}
       <Footer />
     </div>
-    </>
   );
 }

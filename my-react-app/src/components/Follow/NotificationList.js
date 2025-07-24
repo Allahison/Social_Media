@@ -24,7 +24,10 @@ export default function NotificationList({ setNotificationCount }) {
               type,
               created_at,
               sender_id,
-              profiles:profiles!notifications_sender_id_fkey(full_name, avatar_url)
+              profiles!fk_notification_sender (
+                full_name,
+                avatar_url
+              )
             `)
             .eq('receiver_id', userData.id),
 
@@ -32,10 +35,14 @@ export default function NotificationList({ setNotificationCount }) {
             .from('like_notifications')
             .select(`
               id,
-              post_id,
+              type,
               created_at,
               sender_id,
-              profiles:sender_id(full_name, avatar_url)
+              post_id,
+              profiles!fk_like_sender (
+                full_name,
+                avatar_url
+              )
             `)
             .eq('receiver_id', userData.id),
 
@@ -43,48 +50,42 @@ export default function NotificationList({ setNotificationCount }) {
             .from('comment_notifications')
             .select(`
               id,
-              post_id,
+              type,
               created_at,
               sender_id,
-              profiles:sender_id(full_name, avatar_url)
+              post_id,
+              comment_id,
+              profiles!fk_comment_sender (
+                full_name,
+                avatar_url
+              )
             `)
             .eq('receiver_id', userData.id)
         ]);
 
         if (followError || likeError || commentError) {
-          console.error('Notification fetch error:', followError || likeError || commentError);
+          console.error('Error fetching notifications:', followError || likeError || commentError);
           return;
         }
 
-        const formattedFollow = (followData || []).map((item) => ({
-          id: item.id,
-          type: item.type,
-          created_at: new Date(item.created_at),
-          sender: item.profiles
-        }));
+        const formatData = (data, fallbackType = null) =>
+          (data || []).map((item) => ({
+            id: item.id,
+            type: item.type || fallbackType,
+            created_at: new Date(item.created_at),
+            sender: item.profiles
+          }));
 
-        const formattedLikes = (likeData || []).map((item) => ({
-          id: item.id,
-          type: 'like',
-          created_at: new Date(item.created_at),
-          sender: item.profiles
-        }));
+        const allNotifications = [
+          ...formatData(followData),
+          ...formatData(likeData, 'like'),
+          ...formatData(commentData, 'comment')
+        ].sort((a, b) => b.created_at - a.created_at);
 
-        const formattedComments = (commentData || []).map((item) => ({
-          id: item.id,
-          type: 'comment',
-          created_at: new Date(item.created_at),
-          sender: item.profiles
-        }));
-
-        const all = [...formattedFollow, ...formattedLikes, ...formattedComments].sort(
-          (a, b) => b.created_at - a.created_at
-        );
-
-        setNotifications(all);
-        if (setNotificationCount) setNotificationCount(all.length);
-      } catch (err) {
-        console.error('Unexpected error fetching notifications:', err);
+        setNotifications(allNotifications);
+        if (setNotificationCount) setNotificationCount(allNotifications.length);
+      } catch (error) {
+        console.error('Unexpected error fetching notifications:', error);
       }
     };
 
@@ -92,22 +93,24 @@ export default function NotificationList({ setNotificationCount }) {
   }, [userData, setNotificationCount]);
 
   const handleClearAll = async () => {
+    if (!userData?.id) return;
+
     try {
-      const [followResult, likeResult, commentResult] = await Promise.all([
+      const [followDel, likeDel, commentDel] = await Promise.all([
         supabase.from('notifications').delete().eq('receiver_id', userData.id),
         supabase.from('like_notifications').delete().eq('receiver_id', userData.id),
         supabase.from('comment_notifications').delete().eq('receiver_id', userData.id)
       ]);
 
-      if (followResult.error || likeResult.error || commentResult.error) {
-        console.error('Clear error:', followResult.error || likeResult.error || commentResult.error);
+      if (followDel.error || likeDel.error || commentDel.error) {
+        console.error('Clear error:', followDel.error || likeDel.error || commentDel.error);
         return;
       }
 
       setNotifications([]);
       if (setNotificationCount) setNotificationCount(0);
-    } catch (err) {
-      console.error('Unexpected error clearing notifications:', err);
+    } catch (error) {
+      console.error('Unexpected error clearing notifications:', error);
     }
   };
 
@@ -141,7 +144,7 @@ export default function NotificationList({ setNotificationCount }) {
                   ? 'unfollowed you.'
                   : notif.type === 'comment'
                   ? 'commented on your post.'
-                  : 'did something.'}
+                  : 'performed an action.'}
                 <br />
                 <small className="notification-time">
                   {notif.created_at.toLocaleString('en-PK', {

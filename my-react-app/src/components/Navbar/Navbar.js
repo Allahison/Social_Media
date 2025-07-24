@@ -47,29 +47,46 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // ✅ UPDATED: Now includes comment_notifications and correct field names
   useEffect(() => {
-    const fetchUnreadCount = async () => {
-      if (!userData?.id) return;
+  const fetchUnreadCount = async () => {
+    if (!userData?.id) return;
 
-      const [likeRes, followRes] = await Promise.all([
+    try {
+      const [likeRes, commentRes, followRes] = await Promise.all([
         supabase
           .from('like_notifications')
-          .select('id', { count: 'exact' })
+          .select('id', { count: 'exact', head: true })
+          .eq('receiver_id', userData.id)
+          .eq('is_read', false),
+
+        supabase
+          .from('comment_notifications')
+          .select('id', { count: 'exact', head: true })
           .eq('receiver_id', userData.id)
           .eq('is_read', false),
 
         supabase
           .from('notifications')
-          .select('id', { count: 'exact' })
+          .select('id', { count: 'exact', head: true })
           .eq('receiver_id', userData.id)
-          .eq('is_read', false)
+          .eq('read', false)
       ]);
 
-      setNotificationCount((likeRes.count || 0) + (followRes.count || 0));
-    };
+      const totalUnread =
+        (likeRes.count || 0) +
+        (commentRes.count || 0) +
+        (followRes.count || 0);
 
-    fetchUnreadCount();
-  }, [userData]);
+      setNotificationCount(totalUnread);
+    } catch (error) {
+      console.error("Failed to fetch unread notification counts:", error);
+    }
+  };
+
+  fetchUnreadCount();
+}, [userData]);
+
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
