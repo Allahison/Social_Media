@@ -10,8 +10,9 @@ export default defineConfig({
     },
   },
   server: {
-    host: '0.0.0.0', // ✅ Allow access from other devices on the network
-    port: 5173       // ✅ Default port (can be changed if needed)
+    host: '0.0.0.0',
+    port: 5173,
+    historyApiFallback: true, // ✅ Fix for React Router 404s
   },
   esbuild: {
     loader: 'jsx',
