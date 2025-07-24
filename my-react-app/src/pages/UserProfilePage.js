@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './UserProfilePage.css';
 import { useUser } from '../context/UserContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import PostCard from '../components/PostCard/PostCard';
 import { useFollow } from '../context/FollowContext';
@@ -11,27 +11,39 @@ import Loader from '../components/Loader';
 export default function UserProfilePage() {
   const { userData } = useUser();
   const { followersList, followingList, fetchFollowers, fetchFollowing } = useFollow();
+  const { id: viewedUserId } = useParams(); // 👈 friend/user profile ID from URL
 
-  const [fullName, setFullName] = useState('');
-  const [description, setDescription] = useState('');
-  const [dob, setDob] = useState('');
+  const [profileData, setProfileData] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
   const [showFollowModal, setShowFollowModal] = useState(false);
   const [followType, setFollowType] = useState('');
   const [followUsersData, setFollowUsersData] = useState([]);
 
-  const navigate = useNavigate();
+  const isOwnProfile = userData?.id === viewedUserId;
 
   useEffect(() => {
-    if (!userData) return;
-    setFullName(userData.full_name);
-    setDescription(userData.description);
-    setDob(userData.dob);
-    fetchUserPosts();
-    fetchFollowers(userData.id);
-    fetchFollowing(userData.id);
-  }, [userData]);
+    if (!viewedUserId) return;
+
+    const fetchProfile = async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', viewedUserId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching profile:', error.message);
+      } else {
+        setProfileData(data);
+        fetchFollowers(viewedUserId);
+        fetchFollowing(viewedUserId);
+        fetchUserPosts(viewedUserId);
+      }
+    };
+
+    fetchProfile();
+  }, [viewedUserId]);
 
   useEffect(() => {
     if (
@@ -43,13 +55,13 @@ export default function UserProfilePage() {
     }
   }, [showFollowModal, followType, followersList, followingList]);
 
-  const fetchUserPosts = async () => {
+  const fetchUserPosts = async (userId) => {
     try {
       setLoadingPosts(true);
       const { data, error } = await supabase
         .from('posts')
         .select('*')
-        .eq('user_id', userData.id)
+        .eq('user_id', userId)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -70,14 +82,14 @@ export default function UserProfilePage() {
         .from('posts')
         .delete()
         .eq('id', postId)
-        .eq('user_id', userData.id); // Ensure user can only delete their own posts
+        .eq('user_id', userData.id);
 
       if (error) {
         alert('Failed to delete post.');
         console.error('Delete error:', error);
       } else {
         alert('Post deleted successfully!');
-        fetchUserPosts(); // Refresh post list
+        fetchUserPosts(viewedUserId);
       }
     } catch (err) {
       console.error('Unexpected error:', err);
@@ -107,16 +119,16 @@ export default function UserProfilePage() {
     }
   };
 
-  if (!userData) return <Loader />;
+  if (!profileData) return <Loader />;
 
   return (
     <div className="user-profile-page">
       <Navbar />
 
-      {userData.cover_url && (
+      {profileData.cover_url && (
         <div className="cover-photo-wrapper">
           <img
-            src={userData.cover_url}
+            src={profileData.cover_url}
             alt="Cover"
             className="cover-photo"
           />
@@ -125,14 +137,14 @@ export default function UserProfilePage() {
 
       <div className="profile-card">
         <img
-          src={userData.avatar_url || '/assets/default-avatar.png'}
+          src={profileData.avatar_url || '/assets/default-avatar.png'}
           alt="Profile"
           className="profile-avatar"
         />
-        <h2>@{userData.username || 'user'}</h2>
-        <div className="full-name-text">🧑 {fullName}</div>
-        <div className="description-text">📜 {description}</div>
-        <div className="dob-text">🎂 Date of Birth: {dob}</div>
+        <h2>@{profileData.username || 'user'}</h2>
+        <div className="full-name-text">🧑 {profileData.full_name}</div>
+        <div className="description-text">📜 {profileData.description}</div>
+        <div className="dob-text">🎂 Date of Birth: {profileData.dob}</div>
 
         <div className="follow-stats">
           <div onClick={() => { setFollowType('followers'); setShowFollowModal(true); }}>
@@ -145,7 +157,7 @@ export default function UserProfilePage() {
       </div>
 
       <div className="user-posts">
-        <h3 className="posts-heading">Your Posts</h3>
+        <h3 className="posts-heading">{isOwnProfile ? 'Your Posts' : `${profileData.full_name}'s Posts`}</h3>
         {loadingPosts ? (
           <p>Loading posts...</p>
         ) : posts.length === 0 ? (
@@ -158,12 +170,14 @@ export default function UserProfilePage() {
                 currentUserId={userData.id}
                 onDelete={fetchUserPosts}
               />
-              <button
-                className="delete-post-btn"
-                onClick={() => handleDeletePost(post.id)}
-              >
-                🗑 Delete Post
-              </button>
+              {isOwnProfile && (
+                <button
+                  className="delete-post-btn"
+                  onClick={() => handleDeletePost(post.id)}
+                >
+                  🗑 Delete Post
+                </button>
+              )}
             </div>
           ))
         )}
