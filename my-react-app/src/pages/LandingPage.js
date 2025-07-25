@@ -51,11 +51,7 @@ export default function LandingPage() {
         {user ? 'Dashboard' : 'Get Started'}
       </a>
 
-      {/* Main Content */}
-      <main className="main-content">
-        <h2 className="headline">Ace Your Interviews</h2>
-        <p className="subtext">AI-powered mock interviews with instant feedback.</p>
-      </main>
+
 
       {/* Why Learn Section */}
       <section className="why-learn-wrapper">

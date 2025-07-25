@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import './SignupPage.css';
 import logo from '../../public/assets/photos/logo.png';
-import illustration from '../../public/assets/photos/login2.png';
+import illustration from '../../public/assets/photos/signup-illustration.png';
 
 export default function SignupPage() {
   const [email, setEmail] = useState('');
@@ -11,6 +11,8 @@ export default function SignupPage() {
   const [fullName, setFullName] = useState('');
   const [error, setError] = useState(null);
   const [popupMessage, setPopupMessage] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState('');
   const navigate = useNavigate();
 
   const handleSignup = async (e) => {
@@ -22,7 +24,7 @@ export default function SignupPage() {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/login`, // ✅ after confirm, go to /login
+        emailRedirectTo: `${window.location.origin}/login`,
         data: {
           full_name: fullName,
           avatar_url: '',
@@ -38,14 +40,28 @@ export default function SignupPage() {
     if (data.user && !data.session) {
       setPopupMessage('✅ Signup successful! Please check your email to confirm your account.');
     } else if (data.session) {
-      // This will rarely happen if "Email Confirm" is required
       navigate('/setup-profile');
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setPassword(value);
+    evaluatePasswordStrength(value);
+  };
+
+  const evaluatePasswordStrength = (pass) => {
+    if (pass.length < 6) {
+      setPasswordStrength('Weak');
+    } else if (pass.match(/[a-z]/) && pass.match(/[A-Z]/) && pass.match(/[0-9]/)) {
+      setPasswordStrength('Strong');
+    } else {
+      setPasswordStrength('Medium');
     }
   };
 
   return (
     <>
-    
       <div className="login-page-container">
         <div className="login-left-panel">
           <h1 className="brand-title">CodeCraft</h1>
@@ -79,14 +95,30 @@ export default function SignupPage() {
               required
               className="form-input"
             />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="form-input"
-            />
+
+            <div className="password-field">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Password"
+                value={password}
+                onChange={handlePasswordChange}
+                required
+                className="form-input"
+              />
+              <span
+                className="toggle-password-icon"
+                onClick={() => setShowPassword(!showPassword)}
+                title={showPassword ? 'Hide Password' : 'Show Password'}
+              >
+                {showPassword ? '👁️' : '🙈'}
+              </span>
+              {password && (
+                <p className={`password-strength ${passwordStrength.toLowerCase()}`}>
+                  Strength: {passwordStrength}
+                </p>
+              )}
+            </div>
+
             <button type="submit" className="form-button">Sign Up</button>
 
             <p className="form-footer-text">

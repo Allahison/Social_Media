@@ -190,4 +190,62 @@
     padding: 1.5rem;
     border-radius: 0 0 12px 12px;
   }
+}@media (max-width: 480px) {
+  .login-page-container {
+    flex-direction: column;
+    height: auto;
+    padding: 1rem;
+  }
+
+  .login-left-panel,
+  .login-right-panel {
+    flex: none;
+    width: 100%;
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+
+  .login-left-panel {
+    align-items: center;
+    text-align: center;
+  }
+
+  .brand-title {
+    font-size: 2rem;
+  }
+
+  .brand-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .illustration {
+    max-width: 250px;
+    margin-top: 1rem;
+  }
+
+  .login-form {
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: none;
+    max-width: 100%;
+  }
+
+  .form-input {
+    width: 100%;
+    font-size: 0.95rem;
+    padding: 0.7rem 0.9rem;
+  }
+
+  .form-button {
+    font-size: 0.95rem;
+    padding: 0.7rem;
+  }
+
+  .form-footer-text {
+    font-size: 0.85rem;
+  }
+
+  .form-logo {
+    width: 50px;
+  }
 }

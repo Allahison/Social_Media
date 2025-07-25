@@ -198,3 +198,90 @@ a {
     margin-bottom: 24px;
   }
 }
+@media screen and (max-width: 480px) {
+  .dashboard-layout {
+    padding: 12px;
+    gap: 16px;
+  }
+
+  /* Profile summary full width */
+  .profile-summary-card {
+    border-radius: 12px;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+    box-shadow: none;
+  }
+
+  /* Cover photo responsive */
+  .profile-cover {
+    height: 100px;
+    object-fit: cover;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+  }
+
+  /* Avatar centered */
+  .avatar-box {
+    position: static;
+    transform: none;
+    margin-top: -45px;
+    margin-bottom: 8px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .profile-avatar {
+    width: 70px;
+    height: 70px;
+  }
+
+  .profile-name {
+    font-size: 16px;
+  }
+
+  .profile-tagline {
+    font-size: 13px;
+    max-height: 70px;
+  }
+
+  /* Follow button (assuming you have one with class `.follow-button`) */
+  .follow-button {
+
+    margin-left: -10rem;
+    margin-top: 10px;
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 6px;
+    background-color: #4b6cb7;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: fit-content;
+  }
+
+  .follow-button:active {
+    margin-left: -10rem;
+    background-color: #3a56a1;
+  }
+
+  /* Create Post component isolated */
+  .create-post-container {
+    margin-top: 10px;
+    width: 100%;
+    margin: 16px 0;
+    background: #fff;
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Move Create Post below profile or wherever needed */
+  .feed-area .create-post-container {
+    order: 2;
+  }
+
+  /* Optional: Hide right sidebar on small devices */
+  .sidebar-right {
+    display: none;
+  }
+}

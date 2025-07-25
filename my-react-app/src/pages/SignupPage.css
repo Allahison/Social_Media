@@ -130,4 +130,89 @@
   .signup-left-panel .illustration {
     display: none;
   }
+}.password-field {
+  position: relative;
+}
+
+.toggle-password-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  user-select: none;
+}
+
+.password-strength {
+  margin-top: 5px;
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+.password-strength.weak {
+  color: red;
+}
+
+.password-strength.medium {
+  color: orange;
+}
+
+.password-strength.strong {
+  color: green;
+}
+@media (max-width: 480px) {
+  .signup-page-container {
+    flex-direction: column;
+    height: auto;
+    padding: 20px 10px;
+  }
+
+  .signup-left-panel,
+  .signup-right-panel {
+    width: 100%;
+    padding: 20px 15px;
+  }
+
+  .signup-left-panel {
+    align-items: center;
+    text-align: center;
+  }
+
+  .signup-left-panel .brand-title {
+    font-size: 2rem;
+  }
+
+  .signup-left-panel .brand-subtitle {
+    font-size: 1rem;
+  }
+
+  .signup-left-panel .illustration {
+    display: none;
+  }
+
+  .signup-form {
+    padding: 20px;
+    max-width: 100%;
+    border-radius: 10px;
+    box-shadow: none;
+  }
+
+  .signup-form .form-input,
+  .signup-form .form-button {
+    font-size: 0.95rem;
+    padding: 10px;
+  }
+
+  .signup-form .form-title {
+    font-size: 1.5rem;
+  }
+
+  .signup-form .form-footer-text {
+    font-size: 0.85rem;
+  }
+
+  .signup-form .form-logo {
+    width: 50px;
+  }
 }

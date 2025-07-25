@@ -357,4 +357,217 @@ body {
   .game-card img {
     height: 130px;
   }
+}/* ... Keep your existing styles above ... */
+
+/* Responsive: Tablets and Medium Devices */
+@media (max-width: 1024px) {
+  .gaming-page {
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .gaming-sidebar,
+  .gaming-content {
+    width: 100%;
+  }
+
+  .game-card img {
+    height: 130px;
+  }
+
+  .search-bar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+/* Responsive: Small Tablets and Large Phones */
+@media (max-width: 768px) {
+  .gaming-page {
+    padding: 12px;
+  }
+
+  .game-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+  }
+
+  .game-card img {
+    height: 120px;
+  }
+
+  .gaming-sidebar h3 {
+    font-size: 18px;
+  }
+
+  .search-bar {
+    padding: 10px 14px;
+  }
+
+  .search-bar input {
+    font-size: 14px;
+  }
+
+  .popup-form {
+    width: 90%;
+  }
+}
+
+/* Responsive: Phones (480px and below) */
+@media (max-width: 480px) {
+  .gaming-page {
+    padding: 8px;
+  }
+
+  .gaming-sidebar {
+    padding: 16px;
+    top: 60px;
+  }
+
+  .gaming-sidebar li {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .gaming-content {
+    padding: 16px;
+    max-height: none;
+  }
+
+  .game-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .game-card img {
+    height: 160px;
+  }
+
+  .game-card h4 {
+    font-size: 15px;
+  }
+
+  .game-description,
+  .game-genre {
+    font-size: 13px;
+  }
+
+  .search-bar {
+    flex-direction: column;
+    padding: 8px 12px;
+  }
+
+  .search-bar input {
+    width: 100%;
+  }
+
+  .popup-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .popup-buttons button {
+    width: 100%;
+  }
+
+  .recent-game span {
+    font-size: 13px;
+  }
+
+  .recent-game img {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* Responsive: Extra Small Devices (<= 360px) */
+@media (max-width: 360px) {
+  .game-card {
+    padding-bottom: 12px;
+  }
+
+  .game-card h4 {
+    font-size: 14px;
+  }
+
+  .remove-button {
+    font-size: 13px;
+    padding: 5px 10px;
+  }
+
+  .popup-form {
+    padding: 16px;
+  }
+
+  .popup-buttons button {
+    font-size: 13px;
+    padding: 7px 12px;
+  }
+}/* Extra Small Phones (<= 320px) */
+@media (max-width: 320px) {
+  .game-card h4 {
+    font-size: 13px;
+  }
+
+  .game-description,
+  .game-genre {
+    font-size: 12px;
+  }
+
+  .popup-form {
+    padding: 14px;
+    width: 95%;
+  }
+
+  .popup-buttons button {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  .recent-game span {
+    font-size: 12px;
+  }
+
+  .recent-game img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .search-bar {
+    padding: 6px 10px;
+  }
+
+  .search-bar input {
+    font-size: 13px;
+  }
+
+  .remove-button {
+    font-size: 12px;
+    padding: 5px 8px;
+  }
+}
+
+
+/* Landscape Phones */
+@media screen and (orientation: landscape) and (max-height: 420px) {
+  .gaming-page {
+    flex-direction: row;
+    padding: 8px;
+  }
+
+  .gaming-sidebar {
+    display: none; /* hide sidebar for better space use */
+  }
+
+  .gaming-content {
+    max-height: 100vh;
+    padding: 8px;
+  }
+
+  .game-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+
+  .game-card img {
+    height: 100px;
+  }
 }
